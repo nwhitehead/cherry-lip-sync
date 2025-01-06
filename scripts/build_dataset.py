@@ -87,7 +87,7 @@ def build():
         samples = samples.numpy()[0]
         data = extract_all(table, samples, rate)
         results.append(data)
-    return pd.concat(results)
+    return pd.concat(results, ignore_index=True)
 
 data = build()
 print(data)
