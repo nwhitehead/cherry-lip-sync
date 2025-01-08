@@ -218,6 +218,7 @@ num_classes = len(viseme_labels)
 num_epochs = 5
 batch_size = 10
 learning_rate = 0.001
+batch_time = 200
 
 model = NeuralNet(input_size, hidden_size, num_classes)
 
@@ -230,24 +231,34 @@ transform = nn.Sequential(
     Upsample(),
     AudioMFCC(),
     PadVisemes(),
-    RandomChunk(size=200, seed=1),
+    RandomChunk(size=batch_time, seed=1),
 )
 dataset = LipsyncDataset('./data/lipsync.parquet', transform=transform)
 
-train_loader = torch.utils.data.DataLoader(dataset=dataset, 
+rng = torch.Generator().manual_seed(1)
+train_dataset, test_dataset = torch.utils.data.random_split(dataset, [0.05, 0.95], generator=rng)
+
+train_loader = torch.utils.data.DataLoader(dataset=train_dataset, 
                                            batch_size=batch_size, 
                                            shuffle=True)
 
-total_step = len(dataset)
+total_step = len(train_dataset)
 for epoch in tqdm(range(num_epochs), total=num_epochs, desc='Epoch', colour='#FF80D0'):
     for i, sample in tqdm(enumerate(train_loader), total=len(train_loader), desc='Sample', leave=False, colour='#00D0FF'):
         # Move tensors to the configured device
         #print(epoch, i, sample['audio'].shape, sample['visemes'].shape)
+        # audio is B C T -> float
         audio = sample['audio'].to(device)
+        # visemes is B T -> float representing viseme
         visemes = sample['visemes'].to(device)
 
-#         # Forward pass
-#         outputs = model(images)
+        # Forward passes
+        for offset in range(batch_time - lookahead_frames + 1):
+            inputs = audio[:, :, offset:offset + lookahead_frames].reshape(-1, input_size).to(torch.float)
+            labels = visemes[:, offset]
+#            print(inputs.shape, labels.shape)
+            outputs = model(inputs)
+            print(outputs.shape)
 #         loss = criterion(outputs, labels)
         
 #         # Backward and optimize
