@@ -6,6 +6,7 @@ import os
 import argparse
 import random
 
+from tqdm import tqdm
 import numpy as np
 import torch.nn as nn
 import pandas as pd
@@ -14,8 +15,6 @@ import pyarrow.parquet as pq
 import torch
 import torchaudio
 from torch.utils.data import Dataset
-
-
 
 # Fully connected neural network with one hidden layer
 class NeuralNet(nn.Module):
@@ -108,24 +107,29 @@ class LipsyncDataset(Dataset):
 
 class AudioMFCC(nn.Module):
     '''Analyze audio to MFCC'''
-    def __init__(self, audio_rate=16000, num_mels=13):
+    # Times in seconds
+    def __init__(self, audio_rate=16000, num_mels=13, window_time=25e-3, hop_time=10e-3):
         super().__init__()
-        window_time = 25e-3 # seconds
-        window_length = round(window_time * audio_rate)
-        hop_time = 10e-3 # seconds
-        hop_length = round(hop_time * audio_rate)
+        self.window_length = round(window_time * audio_rate)
+        self.hop_length = round(hop_time * audio_rate)
         melkwargs = {
-            "n_fft": window_length,
-            "win_length": window_length,
-            "hop_length": hop_length,
+            "n_fft": self.window_length,
+            "win_length": self.window_length,
+            "hop_length": self.hop_length,
         }
-        self.transform_audio = torchaudio.transforms.MFCC(sample_rate=audio_rate, n_mfcc=num_mels, melkwargs=melkwargs)
+        self.mfcc = torchaudio.transforms.MFCC(sample_rate=audio_rate, n_mfcc=num_mels, melkwargs=melkwargs)
 
     def __call__(self, sample):
-        a = self.transform_audio(sample['audio'])
+        waveform = sample['audio']
+        a = self.mfcc(waveform)
+        vols = []
+        for i in range(a.shape[1]):
+            w = waveform[i * self.hop_length:i * self.hop_length + self.window_length].numpy()
+            vols.append(np.log(1e-10 + np.sqrt(np.mean(w ** 2))))
+        tv = torch.tensor(vols).reshape(1,-1)
         v = sample['visemes']
         return {
-            'audio': a,
+            'audio': torch.cat((tv, a)),
             'visemes': v,
         }
 
@@ -226,15 +230,13 @@ train_loader = torch.utils.data.DataLoader(dataset=dataset,
                                            shuffle=True)
 
 total_step = len(dataset)
-for epoch in range(num_epochs):
-    for i, sample in enumerate(train_loader):
+for epoch in tqdm(range(num_epochs), total=num_epochs, desc='Epoch', colour='#FF80D0'):
+    for i, sample in tqdm(enumerate(train_loader), total=len(train_loader), desc='Sample', leave=False, colour='#00d0ff'):
         # Move tensors to the configured device
-        print(epoch, i, sample['audio'].shape, sample['visemes'].shape)
+        #print(epoch, i, sample['audio'].shape, sample['visemes'].shape)
         audio = sample['audio'].to(device)
         visemes = sample['visemes'].to(device)
-#        images = images.reshape(-1, 28*28).to(device)
-#         labels = labels.to(device)
-        
+
 #         # Forward pass
 #         outputs = model(images)
 #         loss = criterion(outputs, labels)
