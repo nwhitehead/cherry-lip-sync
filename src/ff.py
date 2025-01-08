@@ -122,14 +122,23 @@ class AudioMFCC(nn.Module):
     def __call__(self, sample):
         waveform = sample['audio']
         a = self.mfcc(waveform)
+        # Compute volumes
         vols = []
         for i in range(a.shape[1]):
             w = waveform[i * self.hop_length:i * self.hop_length + self.window_length].numpy()
             vols.append(np.log(1e-10 + np.sqrt(np.mean(w ** 2))))
         tv = torch.tensor(vols).reshape(1,-1)
         v = sample['visemes']
+        # Stack MFCC values and volume
+        a = torch.cat((tv, a))
+        # Convolve to get smoothed derivative at same size for everything
+        d = np.array([0.5, 0.5, -0.5, -0.5])
+        x = a.numpy()
+        delta_a = np.apply_along_axis(np.convolve, axis=1, arr=x, v=d, mode='same')
+        # Stack everything
+        a = torch.cat((torch.tensor(delta_a), a))
         return {
-            'audio': torch.cat((tv, a)),
+            'audio': a,
             'visemes': v,
         }
 
@@ -231,7 +240,7 @@ train_loader = torch.utils.data.DataLoader(dataset=dataset,
 
 total_step = len(dataset)
 for epoch in tqdm(range(num_epochs), total=num_epochs, desc='Epoch', colour='#FF80D0'):
-    for i, sample in tqdm(enumerate(train_loader), total=len(train_loader), desc='Sample', leave=False, colour='#00d0ff'):
+    for i, sample in tqdm(enumerate(train_loader), total=len(train_loader), desc='Sample', leave=False, colour='#00D0FF'):
         # Move tensors to the configured device
         #print(epoch, i, sample['audio'].shape, sample['visemes'].shape)
         audio = sample['audio'].to(device)
