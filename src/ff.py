@@ -4,8 +4,10 @@
 
 import os
 import argparse
+import logging
 import random
-from tqdm import tqdm
+from tqdm import tqdm, trange
+from tqdm.contrib.logging import logging_redirect_tqdm
 import torch.nn as nn
 import torch
 from torchinfo import summary
@@ -65,57 +67,78 @@ test_loader = torch.utils.data.DataLoader(
     shuffle=False,
 )
 
-total_step = len(train_dataset)
-for epoch in tqdm(range(num_epochs), total=num_epochs, desc='Epoch', colour='#FF80D0'):
+LOG = logging.getLogger('Training')
+logging.basicConfig(level=logging.INFO)
 
-    train_losses = 0.0
+def hex_to_rgb(hex_color):
+    """Converts a hex color code (6 digit) to RGB integers."""
+    hex_color = hex_color.lstrip('#')
+    return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
 
-    for i, sample in tqdm(enumerate(train_loader), total=len(train_loader), desc='Sample', leave=False, colour='#00D0FF'):
-        # Move tensors to the configured device
-        #print(epoch, i, sample['audio'].shape, sample['visemes'].shape)
-        # audio is N C T -> float
-        audio = sample['audio'].to(torch.float).to(device)
-        # visemes is N T -> float representing viseme
-        visemes = sample['visemes'].to(torch.long).to(device)
+def truecolor(msg, color):
+    r, g, b = hex_to_rgb(color)
+    return f'\x1b[38;2;{r};{g};{b}m{msg}\x1b[0m'
 
-        # Input to model needs to be N T C
-        x = audio.permute(0, 2, 1)
-        outputs, _hn = model(x)
-        # Outpus is now N T C where C is number of visemes, numbers are raw logits (no softmax or anything)
-        # CrossEntropyLoss takes in N C T.
-        # Now use lookahead to define relation between input timing and output expectations
-        # Ignore first few predictions from model
-        left = outputs[:, lookahead_frames:, :].permute(0, 2, 1)
-        right = visemes[:, :-lookahead_frames]
-        loss = criterion(left, right)
+def log_loss_color(prefix, msg):
+    LOG.info(f'{prefix}{truecolor(msg, "#80ff80")}')
+def log_epoch_color(prefix, msg):
+    LOG.info(f'{prefix}{truecolor(msg, "#ffff80")}')
+def log_validation_color(prefix, msg):
+    LOG.info(f'{prefix}{truecolor(msg, "#fff0f0")}')
 
-        # Backward and optimize
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        loss = loss.detach().cpu().item()
-        train_losses += loss
-        #print(f'Training loss: {loss}')
-    #print(f'Epoch training loss: {train_losses / len(train_loader)}')
+with logging_redirect_tqdm():
 
-    if (epoch + 1) % validate_every == 0:
-        with torch.no_grad():
-            correct = 0
-            total = 0
+    for epoch in tqdm(range(num_epochs), total=num_epochs, desc='Epoch', colour='#FF80D0'):
 
-            # Validation step
-            for i, sample in tqdm(enumerate(test_loader), total=len(test_loader), desc='Sample', leave=False, colour='#FFD0FF'):
-                audio = sample['audio'].to(torch.float).to(device)
-                visemes = sample['visemes'].to(torch.long).to(device)
+        train_losses = 0.0
 
-                x = audio.permute(0, 2, 1)
-                outputs, _hn = model(x)
-                # outputs is N T C
-                _, predicted = torch.max(outputs.data, 2)
-                # predicted is N T -> viseme
-                left = predicted[:, lookahead_frames:]
-                right = visemes[:, :-lookahead_frames]
-                total += right.nelement()
-                correct += (left == right).sum().item()
+        for i, sample in tqdm(enumerate(train_loader), total=len(train_loader), desc='Sample', leave=False, colour='#00D0FF'):
+            # Move tensors to the configured device
+            #print(epoch, i, sample['audio'].shape, sample['visemes'].shape)
+            # audio is N C T -> float
+            audio = sample['audio'].to(torch.float).to(device)
+            # visemes is N T -> float representing viseme
+            visemes = sample['visemes'].to(torch.long).to(device)
 
-            print(f'Accuracy on {len(test_loader)} samples: {100 * correct / total} %')
+            # Input to model needs to be N T C
+            x = audio.permute(0, 2, 1)
+            outputs, _hn = model(x)
+            # Outpus is now N T C where C is number of visemes, numbers are raw logits (no softmax or anything)
+            # CrossEntropyLoss takes in N C T.
+            # Now use lookahead to define relation between input timing and output expectations
+            # Ignore first few predictions from model
+            left = outputs[:, lookahead_frames:, :].permute(0, 2, 1)
+            right = visemes[:, :-lookahead_frames]
+            loss = criterion(left, right)
+
+            # Backward and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            loss = loss.detach().cpu().item()
+            train_losses += loss
+            log_loss_color('Loss: ', f'{loss:.5f}')
+
+        log_epoch_color('Epoch loss: ', f'{(train_losses / len(train_loader)):.5f}')
+
+        if (epoch + 1) % validate_every == 0:
+            with torch.no_grad():
+                correct = 0
+                total = 0
+
+                # Validation step
+                for i, sample in tqdm(enumerate(test_loader), total=len(test_loader), desc='Sample', leave=False, colour='#FFD0FF'):
+                    audio = sample['audio'].to(torch.float).to(device)
+                    visemes = sample['visemes'].to(torch.long).to(device)
+
+                    x = audio.permute(0, 2, 1)
+                    outputs, _hn = model(x)
+                    # outputs is N T C
+                    _, predicted = torch.max(outputs.data, 2)
+                    # predicted is N T -> viseme
+                    left = predicted[:, lookahead_frames:]
+                    right = visemes[:, :-lookahead_frames]
+                    total += right.nelement()
+                    correct += (left == right).sum().item()
+
+                log_validation_color('Accuracy: ', f'{(100 * correct / total):.5f}%')
