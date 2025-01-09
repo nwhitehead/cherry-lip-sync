@@ -36,9 +36,10 @@ batch_size = 10
 learning_rate = 0.001
 batch_time = 200
 validate_every = 1
+layers = 2
 seed = 1
 
-model = NeuralNet(input_size, hidden_size, num_classes)
+model = NeuralNet(input_size, hidden_size, layers, num_classes)
 checkpoint_name = 'model'
 
 wandb.init(
