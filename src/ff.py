@@ -4,7 +4,6 @@
 
 import os
 import argparse
-import logging
 import random
 from tqdm import tqdm, trange
 from tqdm.contrib.logging import logging_redirect_tqdm
@@ -14,6 +13,7 @@ from torchinfo import summary
 
 from model import NeuralNet
 from data import LipsyncDataset, AudioMFCC, Upsample, PadVisemes, RandomChunk
+from util import log_loss_color, log_epoch_color, log_validation_color
 
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -34,10 +34,11 @@ num_epochs = 200
 batch_size = 10
 learning_rate = 0.001
 batch_time = 200
-validate_every = 5
+validate_every = 2
 
 model = NeuralNet(input_size, hidden_size, num_classes)
 
+# Show model summary
 summary(model, input_size=(1, input_size))
 
 # Loss and optimizer
@@ -66,25 +67,6 @@ test_loader = torch.utils.data.DataLoader(
     batch_size=batch_size,
     shuffle=False,
 )
-
-LOG = logging.getLogger('Training')
-logging.basicConfig(level=logging.INFO)
-
-def hex_to_rgb(hex_color):
-    """Converts a hex color code (6 digit) to RGB integers."""
-    hex_color = hex_color.lstrip('#')
-    return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
-
-def truecolor(msg, color):
-    r, g, b = hex_to_rgb(color)
-    return f'\x1b[38;2;{r};{g};{b}m{msg}\x1b[0m'
-
-def log_loss_color(prefix, msg):
-    LOG.info(f'{prefix}{truecolor(msg, "#80ff80")}')
-def log_epoch_color(prefix, msg):
-    LOG.info(f'{prefix}{truecolor(msg, "#ffff80")}')
-def log_validation_color(prefix, msg):
-    LOG.info(f'{prefix}{truecolor(msg, "#fff0f0")}')
 
 with logging_redirect_tqdm():
 
