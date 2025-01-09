@@ -10,6 +10,7 @@ from tqdm.contrib.logging import logging_redirect_tqdm
 import torch.nn as nn
 import torch
 from torchinfo import summary
+import wandb
 
 from model import NeuralNet
 from data import LipsyncDataset, AudioMFCC, Upsample, PadVisemes, RandomChunk
@@ -35,8 +36,24 @@ batch_size = 10
 learning_rate = 0.001
 batch_time = 200
 validate_every = 1
+seed = 1
 
 model = NeuralNet(input_size, hidden_size, num_classes)
+checkpoint_name = 'model'
+
+wandb.init(
+    project='LipSync',
+    config={
+        'architecture': 'LSTM 1-layer',
+        'learning_rate': learning_rate,
+        'hidden_size': hidden_size,
+        'checkpoint_name': checkpoint_name,
+        'epochs': num_epochs,
+        'batch_time': batch_time,
+        'lookahead_frames': lookahead_frames,
+        'seed': seed,
+    },
+)
 
 # Show model summary
 summary(model, input_size=(1, input_size))
@@ -50,11 +67,11 @@ transform = nn.Sequential(
     Upsample(),
     AudioMFCC(),
     PadVisemes(),
-    RandomChunk(size=batch_time, seed=1),
+    RandomChunk(size=batch_time, seed=seed),
 )
 dataset = LipsyncDataset('./data/lipsync.parquet', transform=transform)
 
-rng = torch.Generator().manual_seed(1)
+rng = torch.Generator().manual_seed(seed)
 train_dataset, test_dataset, _ = torch.utils.data.random_split(dataset, [0.80, 0.20, 0.0], generator=rng)
 
 train_loader = torch.utils.data.DataLoader(
@@ -102,7 +119,9 @@ with logging_redirect_tqdm():
             train_losses += loss
             log_loss_color('Loss: ', f'{loss:.5f}')
 
-        log_epoch_color('Epoch loss: ', f'{(train_losses / len(train_loader)):.5f}')
+        epoch_loss = train_losses / len(train_loader)
+        log_epoch_color('Epoch loss: ', f'{epoch_loss:.5f}')
+        wandb.log({'loss': epoch_loss})
 
         if (epoch + 1) % validate_every == 0:
             model.eval()
@@ -125,5 +144,7 @@ with logging_redirect_tqdm():
                     total += right.nelement()
                     correct += (left == right).sum().item()
 
-                log_validation_color('Accuracy: ', f'{(100 * correct / total):.5f}%')
-                torch.save(model.state_dict(), f'model-{epoch}.pt')
+                accuracy = 100 * correct / total
+                wandb.log({'acc': accuracy})
+                log_validation_color('Accuracy: ', f'{accuracy:.5f}%')
+                torch.save(model.state_dict(), f'{checkpoint_name}-{epoch}.pt')
