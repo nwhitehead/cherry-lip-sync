@@ -2,3 +2,5 @@ venv/
 data/
 **/*.pyc
 .ipynb_checkpoints
+wandb/
+checkpoints/

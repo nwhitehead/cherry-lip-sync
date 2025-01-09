@@ -147,4 +147,4 @@ with logging_redirect_tqdm():
                 accuracy = 100 * correct / total
                 wandb.log({'acc': accuracy})
                 log_validation_color('Accuracy: ', f'{accuracy:.5f}%')
-                torch.save(model.state_dict(), f'{checkpoint_name}-{epoch}.pt')
+                torch.save(model.state_dict(), f'checkpoints/{checkpoint_name}-{epoch}.pt')
