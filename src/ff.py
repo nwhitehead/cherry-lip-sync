@@ -30,8 +30,9 @@ hidden_size = 200
 num_classes = len(viseme_labels)
 num_epochs = 200
 batch_size = 10
-learning_rate = 0.0001
+learning_rate = 0.001
 batch_time = 200
+validate_every = 5
 
 model = NeuralNet(input_size, hidden_size, num_classes)
 
@@ -51,7 +52,7 @@ transform = nn.Sequential(
 dataset = LipsyncDataset('./data/lipsync.parquet', transform=transform)
 
 rng = torch.Generator().manual_seed(1)
-train_dataset, test_dataset, _ = torch.utils.data.random_split(dataset, [0.10, 0.10, 0.8], generator=rng)
+train_dataset, test_dataset, _ = torch.utils.data.random_split(dataset, [0.80, 0.20, 0.0], generator=rng)
 
 train_loader = torch.utils.data.DataLoader(
     dataset=train_dataset,
@@ -94,26 +95,27 @@ for epoch in tqdm(range(num_epochs), total=num_epochs, desc='Epoch', colour='#FF
         optimizer.step()
         loss = loss.detach().cpu().item()
         train_losses += loss
-        print(f'Training loss: {loss}')
-    print(f'Epoch training loss: {train_losses / len(train_loader)}')
+        #print(f'Training loss: {loss}')
+    #print(f'Epoch training loss: {train_losses / len(train_loader)}')
 
-    with torch.no_grad():
-        correct = 0
-        total = 0
+    if (epoch + 1) % validate_every == 0:
+        with torch.no_grad():
+            correct = 0
+            total = 0
 
-        # Validation step
-        for i, sample in tqdm(enumerate(test_loader), total=len(test_loader), desc='Sample', leave=False, colour='#FFD0FF'):
-            audio = sample['audio'].to(torch.float).to(device)
-            visemes = sample['visemes'].to(torch.long).to(device)
+            # Validation step
+            for i, sample in tqdm(enumerate(test_loader), total=len(test_loader), desc='Sample', leave=False, colour='#FFD0FF'):
+                audio = sample['audio'].to(torch.float).to(device)
+                visemes = sample['visemes'].to(torch.long).to(device)
 
-            x = audio.permute(0, 2, 1)
-            outputs, _hn = model(x)
-            # outputs is N T C
-            _, predicted = torch.max(outputs.data, 2)
-            # predicted is N T -> viseme
-            left = predicted[:, lookahead_frames:]
-            right = visemes[:, :-lookahead_frames]
-            total += right.size(1)
-            correct += (left == right).sum().item()
+                x = audio.permute(0, 2, 1)
+                outputs, _hn = model(x)
+                # outputs is N T C
+                _, predicted = torch.max(outputs.data, 2)
+                # predicted is N T -> viseme
+                left = predicted[:, lookahead_frames:]
+                right = visemes[:, :-lookahead_frames]
+                total += right.nelement()
+                correct += (left == right).sum().item()
 
-        print(f'Accuracy on {len(test_loader)} samples: {100 * correct / total} %')
+            print(f'Accuracy on {len(test_loader)} samples: {100 * correct / total} %')
