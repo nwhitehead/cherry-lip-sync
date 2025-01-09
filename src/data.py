@@ -42,8 +42,8 @@ class LipsyncDataset(Dataset):
             idx = idx.tolist()
         if idx < 0 or idx >= len(self):
             raise IndexError()
-        a = torch.Tensor(self.table['audio'][idx].copy())
-        v = torch.Tensor(self.table['visemes'][idx].copy())
+        a = torch.Tensor(self.table['audio'][idx].copy()).to(torch.float)
+        v = torch.Tensor(self.table['visemes'][idx].copy()).to(torch.long)
         sample = {
             'audio': a,
             'visemes': v,
@@ -128,7 +128,7 @@ class Upsample(nn.Module):
     def __call__(self, sample):
         a = sample['audio']
         # Visemes needs to have batch etc. stuff in front, then also be float to work
-        v = self.transform_viseme(sample['visemes'].reshape((1, 1, -1)).to(dtype=torch.float)).reshape((-1,))
+        v = self.transform_viseme(sample['visemes'].reshape((1, 1, -1)).to(torch.float)).reshape((-1,))
         return {
             'audio': a,
             'visemes': v,
@@ -172,6 +172,6 @@ class RandomChunk(nn.Module):
             aa = a[:, offset:offset + self.size]
             vv = v[offset:offset + self.size]
         return {
-            'audio': aa,
-            'visemes': vv,
+            'audio': aa.to(torch.float),
+            'visemes': vv.to(torch.long),
         }

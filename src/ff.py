@@ -34,7 +34,7 @@ num_epochs = 200
 batch_size = 10
 learning_rate = 0.001
 batch_time = 200
-validate_every = 2
+validate_every = 1
 
 model = NeuralNet(input_size, hidden_size, num_classes)
 
@@ -72,15 +72,16 @@ with logging_redirect_tqdm():
 
     for epoch in tqdm(range(num_epochs), total=num_epochs, desc='Epoch', colour='#FF80D0'):
 
+        model.train()
         train_losses = 0.0
 
         for i, sample in tqdm(enumerate(train_loader), total=len(train_loader), desc='Sample', leave=False, colour='#00D0FF'):
             # Move tensors to the configured device
             #print(epoch, i, sample['audio'].shape, sample['visemes'].shape)
             # audio is N C T -> float
-            audio = sample['audio'].to(torch.float).to(device)
+            audio = sample['audio'].to(device)
             # visemes is N T -> float representing viseme
-            visemes = sample['visemes'].to(torch.long).to(device)
+            visemes = sample['visemes'].to(device)
 
             # Input to model needs to be N T C
             x = audio.permute(0, 2, 1)
@@ -104,14 +105,15 @@ with logging_redirect_tqdm():
         log_epoch_color('Epoch loss: ', f'{(train_losses / len(train_loader)):.5f}')
 
         if (epoch + 1) % validate_every == 0:
+            model.eval()
             with torch.no_grad():
                 correct = 0
                 total = 0
 
                 # Validation step
                 for i, sample in tqdm(enumerate(test_loader), total=len(test_loader), desc='Sample', leave=False, colour='#FFD0FF'):
-                    audio = sample['audio'].to(torch.float).to(device)
-                    visemes = sample['visemes'].to(torch.long).to(device)
+                    audio = sample['audio'].to(device)
+                    visemes = sample['visemes'].to(device)
 
                     x = audio.permute(0, 2, 1)
                     outputs, _hn = model(x)
@@ -124,3 +126,4 @@ with logging_redirect_tqdm():
                     correct += (left == right).sum().item()
 
                 log_validation_color('Accuracy: ', f'{(100 * correct / total):.5f}%')
+                torch.save(model.state_dict(), f'model-{epoch}.pt')
