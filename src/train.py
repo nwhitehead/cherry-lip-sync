@@ -21,6 +21,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Sorted
 viseme_labels = ['Ah', 'D', 'Ee', 'F', 'L', 'M', 'Neutral', 'Oh', 'R', 'S', 'Uh', 'Woo']
+viseme_classes = torch.tensor([1, 2, 1, 2, 2, 0, 0, 1, 2, 2, 1, 1]).to(torch.long).to(device)
 
 # Audiorate
 rate = 16000
@@ -104,7 +105,7 @@ with logging_redirect_tqdm():
 
             # Input to model needs to be N T C
             x = audio.permute(0, 2, 1)
-            outputs, _hn = model(x)
+            outputs = model(x)
             # Outpus is now N T C where C is number of visemes, numbers are raw logits (no softmax or anything)
             # CrossEntropyLoss takes in N C T.
             # Now use lookahead to define relation between input timing and output expectations
@@ -129,6 +130,7 @@ with logging_redirect_tqdm():
             model.eval()
             with torch.no_grad():
                 correct = 0
+                correct_class = 0
                 total = 0
 
                 # Validation step
@@ -137,7 +139,7 @@ with logging_redirect_tqdm():
                     visemes = sample['visemes'].to(device)
 
                     x = audio.permute(0, 2, 1)
-                    outputs, _hn = model(x)
+                    outputs = model(x)
                     # outputs is N T C
                     _, predicted = torch.max(outputs.data, 2)
                     # predicted is N T -> viseme
@@ -145,8 +147,12 @@ with logging_redirect_tqdm():
                     right = visemes[:, :-lookahead_frames]
                     total += right.nelement()
                     correct += (left == right).sum().item()
+                    left_class = viseme_classes[left.to(torch.long)]
+                    right_class = viseme_classes[right.to(torch.long)]
+                    correct_class += (left_class == right_class).sum().item()
 
                 accuracy = 100 * correct / total
-                wandb.log({'acc': accuracy})
-                log_validation_color('Accuracy: ', f'{accuracy:.5f}%')
+                class_accuracy = 100 * correct_class / total
+                wandb.log({'acc': accuracy, 'class_acc': class_accuracy})
+                log_validation_color('Accuracy: ', f'{accuracy:.5f}%\t{class_accuracy:.5f}%')
                 torch.save(model.state_dict(), f'checkpoints/{checkpoint_name}-{epoch}.pt')
