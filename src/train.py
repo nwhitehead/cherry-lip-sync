@@ -26,7 +26,7 @@ viseme_labels = ['Ah', 'D', 'Ee', 'F', 'L', 'M', 'Neutral', 'Oh', 'R', 'S', 'Uh'
 rate = 16000
 
 # Hyper-parameters
-feature_dims = 28
+feature_dims = 26
 lookahead_frames = 6
 input_size = feature_dims
 hidden_size = 100
@@ -97,10 +97,7 @@ with logging_redirect_tqdm():
             # Move tensors to the configured device
             #print(epoch, i, sample['audio'].shape, sample['visemes'].shape)
             # audio is N C T -> float
-            audio = sample['audio']
-            audio[:, 0, :] *= 0.0
-            audio[:, 14, :] *= 0.0
-            audio = audio.to(device)
+            audio = sample['audio'].to(device)
             # visemes is N T -> float representing viseme
             visemes = sample['visemes'].to(device)
 

@@ -94,19 +94,7 @@ class AudioMFCC(nn.Module):
     def __call__(self, sample):
         waveform = sample['audio']
         a = self.mfcc(waveform)
-        # Compute volumes
-        vols = []
-        for i in range(a.shape[1]):
-            w = waveform[i * self.hop_length:i * self.hop_length + self.window_length].numpy()
-            if len(w) == 0:
-                vol = -24.0
-            else:
-                vol = np.log(1e-10 + np.sqrt(np.mean(w ** 2)))
-            vols.append(vol)
-        tv = torch.tensor(vols).reshape(1,-1)
         v = sample['visemes']
-        # Stack MFCC values and volume
-        a = torch.cat((tv, a))
         # Convolve to get smoothed derivative at same size for everything
         d = np.array([0.5, 0.5, -0.5, -0.5])
         x = a.numpy()
