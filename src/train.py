@@ -29,7 +29,7 @@ rate = 16000
 feature_dims = 28
 lookahead_frames = 6
 input_size = feature_dims
-hidden_size = 200
+hidden_size = 100
 num_classes = len(viseme_labels)
 num_epochs = 200
 batch_size = 10
@@ -97,7 +97,10 @@ with logging_redirect_tqdm():
             # Move tensors to the configured device
             #print(epoch, i, sample['audio'].shape, sample['visemes'].shape)
             # audio is N C T -> float
-            audio = sample['audio'].to(device)
+            audio = sample['audio']
+            audio[:, 0, :] *= 0.0
+            audio[:, 14, :] *= 0.0
+            audio = audio.to(device)
             # visemes is N T -> float representing viseme
             visemes = sample['visemes'].to(device)
 
