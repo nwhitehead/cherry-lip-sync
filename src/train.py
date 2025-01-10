@@ -26,7 +26,8 @@ viseme_labels = ['Ah', 'D', 'Ee', 'F', 'L', 'M', 'Neutral', 'Oh', 'R', 'S', 'Uh'
 rate = 16000
 
 # Hyper-parameters
-feature_dims = 26
+mels = 13
+feature_dims = mels * 2
 lookahead_frames = 6
 input_size = feature_dims
 hidden_size = 100
@@ -61,12 +62,12 @@ summary(model, input_size=(1, input_size))
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)  
+optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)  
 
 # Train the model
 transform = nn.Sequential(
     Upsample(),
-    AudioMFCC(),
+    AudioMFCC(num_mels=mels),
     PadVisemes(),
     RandomChunk(size=batch_time, seed=seed),
 )
@@ -118,7 +119,7 @@ with logging_redirect_tqdm():
             optimizer.step()
             loss = loss.detach().cpu().item()
             train_losses += loss
-            log_loss_color('Loss: ', f'{loss:.5f}')
+            #log_loss_color('Loss: ', f'{loss:.5f}')
 
         epoch_loss = train_losses / len(train_loader)
         log_epoch_color('Epoch loss: ', f'{epoch_loss:.5f}')
