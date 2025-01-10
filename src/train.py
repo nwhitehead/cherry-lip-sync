@@ -15,6 +15,7 @@ import wandb
 from model import NeuralNet
 from data import LipsyncDataset, AudioMFCC, Upsample, PadVisemes, RandomChunk
 from util import log_loss_color, log_epoch_color, log_validation_color
+from loss import ClassesLoss
 
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -62,7 +63,7 @@ wandb.init(
 summary(model, input_size=(1, input_size))
 
 # Loss and optimizer
-criterion = nn.CrossEntropyLoss()
+criterion = ClassesLoss(classes=viseme_classes)
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)  
 
 # Train the model
@@ -120,7 +121,6 @@ with logging_redirect_tqdm():
             optimizer.step()
             loss = loss.detach().cpu().item()
             train_losses += loss
-            #log_loss_color('Loss: ', f'{loss:.5f}')
 
         epoch_loss = train_losses / len(train_loader)
         log_epoch_color('Epoch loss: ', f'{epoch_loss:.5f}')
