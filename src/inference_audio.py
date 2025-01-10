@@ -1,9 +1,16 @@
 import torch
+import torchaudio
 from model import NeuralNet
 from data import LipsyncDataset, AudioMFCC, Upsample, Downsample, PadVisemes, RandomChunk
 
 # Audiorate
 rate = 16000
+
+sample, r = torchaudio.load('./male.wav')
+sample = sample[0, :] # just get one channel
+print(sample.shape)
+sample = torchaudio.functional.resample(sample, r, rate)
+print(sample.shape)
 
 viseme_labels = ['Ah', 'D', 'Ee', 'F', 'L', 'M', 'Neutral', 'Oh', 'R', 'S', 'Uh', 'Woo']
 
@@ -25,17 +32,19 @@ model.eval()
 # No transform so we get raw audio and visemes for reference video generation
 dataset = LipsyncDataset('./data/lipsync.parquet', transform=None)
 
-for i in range(20):
-    s = dataset[i]
-    dataset.make_video(s['audio'], s['visemes'], filename=f'out_{i}_ref.mp4')
-    t = AudioMFCC(num_mels=mels)
-    ds = Downsample()
-    ma = t(s)['audio']
-    ma = torch.unsqueeze(ma, 0)
-    ma = ma.permute(0, 2, 1)
-    out = model(ma)
-    _, v = torch.max(out.data, 2)
-    v = v[:, lookahead_frames:]
-    dsv = ds({ 'audio': s['audio'], 'visemes': v, })['visemes']
-    ref = s['visemes'][:dsv.shape[0]]
-    dataset.make_video(s['audio'], dsv.to(torch.long), filename=f'out_{i}_test.mp4')
+s = {
+    'audio': sample,
+    'visemes': torch.tensor([]),
+}
+
+t = AudioMFCC(num_mels=mels)
+ds = Downsample()
+ma = t(s)['audio']
+ma = torch.unsqueeze(ma, 0)
+ma = ma.permute(0, 2, 1)
+out = model(ma)
+_, v = torch.max(out.data, 2)
+v = v[:, lookahead_frames:]
+dsv = ds({ 'audio': s['audio'], 'visemes': v, })['visemes']
+ref = s['visemes'][:dsv.shape[0]]
+dataset.make_video(s['audio'], dsv.to(torch.long), filename=f'out.mp4')

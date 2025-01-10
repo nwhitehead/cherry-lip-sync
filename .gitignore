@@ -4,3 +4,4 @@ data/
 .ipynb_checkpoints
 wandb/
 checkpoints/
+out/
