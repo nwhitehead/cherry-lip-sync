@@ -28,11 +28,10 @@ viseme_classes = torch.tensor([1, 2, 1, 2, 2, 0, 0, 1, 2, 2, 1, 1]).to(torch.lon
 rate = 16000
 
 # Hyper-parameters
-mels = 13
+mels = 25
 feature_dims = mels * 2
-lookahead_frames = 6
 input_size = feature_dims
-hidden_size = 100
+hidden_size = 200
 num_classes = len(viseme_labels)
 num_epochs = 200
 batch_size = 10
@@ -54,7 +53,6 @@ wandb.init(
         'checkpoint_name': checkpoint_name,
         'epochs': num_epochs,
         'batch_time': batch_time,
-        'lookahead_frames': lookahead_frames,
         'seed': seed,
     },
 )
@@ -109,10 +107,8 @@ with logging_redirect_tqdm():
             outputs = model(x)
             # Outpus is now N T C where C is number of visemes, numbers are raw logits (no softmax or anything)
             # CrossEntropyLoss takes in N C T.
-            # Now use lookahead to define relation between input timing and output expectations
-            # Ignore first few predictions from model
-            left = outputs[:, lookahead_frames:, :].permute(0, 2, 1)
-            right = visemes[:, :-lookahead_frames]
+            left = outputs[:, :, :].permute(0, 2, 1)
+            right = visemes[:, :]
             loss = criterion(left, right)
 
             # Backward and optimize
@@ -143,8 +139,8 @@ with logging_redirect_tqdm():
                     # outputs is N T C
                     _, predicted = torch.max(outputs.data, 2)
                     # predicted is N T -> viseme
-                    left = predicted[:, lookahead_frames:]
-                    right = visemes[:, :-lookahead_frames]
+                    left = predicted[:, :]
+                    right = visemes[:, :]
                     total += right.nelement()
                     correct += (left == right).sum().item()
                     left_class = viseme_classes[left.to(torch.long)]
