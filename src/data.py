@@ -1,7 +1,11 @@
+
+import tempfile
 import numpy as np
 import torch.nn as nn
 import torch
 import torchaudio
+import torchvision
+from torchvision.transforms import v2
 from torch.utils.data import Dataset
 import pyarrow.parquet as pq
 
@@ -57,20 +61,20 @@ class LipsyncDataset(Dataset):
         sample = self[idx]
         return Audio(sample['audio'], rate=self.rate)
 
-    def make_video(self, audio, vis_indexes):
+    def make_video(self, audio, vis_indexes, filename='out.mp4'):
         """Make video given visemes (only for untransformed audio)"""
-        sprites = v2.Resize((256 * 4, 256 * 4))(torchvision.io.decode_image('../images/demolipssheet_bg.png', 'RGB')).permute([1, 2, 0])
+        sprites = v2.Resize((256 * 4, 256 * 4))(torchvision.io.decode_image('./images/demolipssheet_bg.png', 'RGB')).permute([1, 2, 0])
         frames = vis_indexes.shape[0]
         # Make copy of audio in stereo contiguous format for writing to video
-        a = np.ascontiguousarray(torch.Tensor(audio.copy()).reshape(1, -1).expand(2, -1).numpy())
+        a = np.ascontiguousarray(audio.reshape(1, -1).expand(2, -1).numpy())
         v = torch.zeros(frames, 256, 256, 3)
         for i in range(frames):
             vi = self.viseme_labels[vis_indexes[i]]
             pos = self.visemes[vi]
             v[i, :, :, :] = sprites[pos[0] * 256 : pos[0] * 256 + 256, pos[1] * 256 : pos[1] * 256 + 256, :]
-        with tempfile.NamedTemporaryFile(delete_on_close=False, suffix='.mp4', dir='') as f:
-            torchvision.io.write_video('out.mp4', v, fps=30, audio_array=a, audio_fps=self.rate, audio_codec='aac')
-            return 'out.mp4'
+        #with tempfile.NamedTemporaryFile(delete_on_close=False, suffix='.mp4', dir='') as f:
+        torchvision.io.write_video(filename, v, fps=30, audio_array=a, audio_fps=self.rate, audio_codec='aac')
+        return filename
 
     def display_video(self, idx):
         sample = self[idx]
@@ -102,13 +106,29 @@ class AudioMFCC(nn.Module):
         # Stack everything
         a = torch.cat((torch.tensor(delta_a), a))
         return {
-            'audio': a,
+            'audio': a.to(torch.float),
             'visemes': v,
         }
 
 class Upsample(nn.Module):
     '''Upsample visemes to new framerate'''
     def __init__(self, old_fps=30, new_fps=100):
+        super().__init__()
+        ratio = new_fps / old_fps
+        self.transform_viseme = nn.Upsample(scale_factor=ratio, mode='nearest-exact')
+
+    def __call__(self, sample):
+        a = sample['audio']
+        # Visemes needs to have batch etc. stuff in front, then also be float to work
+        v = self.transform_viseme(sample['visemes'].reshape((1, 1, -1)).to(torch.float)).reshape((-1,))
+        return {
+            'audio': a,
+            'visemes': v,
+        }
+
+class Downsample(nn.Module):
+    '''Downsample visemes to new framerate (ensure no single frame durations)'''
+    def __init__(self, old_fps=100, new_fps=30):
         super().__init__()
         ratio = new_fps / old_fps
         self.transform_viseme = nn.Upsample(scale_factor=ratio, mode='nearest-exact')
