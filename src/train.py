@@ -13,7 +13,7 @@ from torchinfo import summary
 import wandb
 
 from model import NeuralNet
-from data import LipsyncDataset, AudioMFCC, Upsample, PadVisemes, RandomChunk
+from data import LipsyncDataset, AudioMels, Upsample, PadVisemes, RandomChunk
 from util import log_loss_color, log_epoch_color, log_validation_color
 
 # Device configuration
@@ -66,7 +66,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 # Train the model
 transform = nn.Sequential(
     Upsample(),
-    AudioMFCC(),
+    AudioMels(),
     PadVisemes(),
     RandomChunk(size=batch_time, seed=seed),
 )

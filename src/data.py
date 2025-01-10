@@ -77,23 +77,24 @@ class LipsyncDataset(Dataset):
         fname = self.make_video(sample['audio'], sample['visemes'])
         return Video(fname)
 
-class AudioMFCC(nn.Module):
-    '''Analyze audio to MFCC'''
+class AudioMels(nn.Module):
+    '''Analyze audio to Mel spectrogram'''
     # Times in seconds
     def __init__(self, audio_rate=16000, num_mels=13, window_time=25e-3, hop_time=10e-3):
         super().__init__()
         self.window_length = round(window_time * audio_rate)
         self.hop_length = round(hop_time * audio_rate)
-        melkwargs = {
-            "n_fft": self.window_length,
-            "win_length": self.window_length,
-            "hop_length": self.hop_length,
-        }
-        self.mfcc = torchaudio.transforms.MFCC(sample_rate=audio_rate, n_mfcc=num_mels, melkwargs=melkwargs)
+        self.transform = torchaudio.transforms.MelSpectrogram(
+            sample_rate=audio_rate,
+            n_fft=self.window_length, 
+            win_length=self.window_length, 
+            hop_length=self.hop_length, 
+            n_mels=num_mels,
+        )
 
     def __call__(self, sample):
         waveform = sample['audio']
-        a = self.mfcc(waveform)
+        a = self.transform(waveform)
         v = sample['visemes']
         # Convolve to get smoothed derivative at same size for everything
         d = np.array([0.5, 0.5, -0.5, -0.5])
