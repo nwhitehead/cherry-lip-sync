@@ -8,7 +8,7 @@ class ClassesLoss:
         self.weight = weight
 
     def __call__(self, left, right):
-        left_class = self.classes[left.to(torch.long)].to(torch.float)
-        right_class = self.classes[right.to(torch.long)].to(torch.float)
+        #left_class = self.classes[left.to(torch.long)].to(torch.float)
+        #right_class = self.classes[right.to(torch.long)].to(torch.float)
 
         return self.criterion(left, right)
