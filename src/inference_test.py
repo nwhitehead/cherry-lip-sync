@@ -26,7 +26,7 @@ model.eval()
 
 # No transform so we get raw audio and visemes for reference video generation
 dataset = LipsyncDataset('./data/lipsync.parquet', transform=None)
-s = dataset[5]
+s = dataset[6]
 dataset.make_video(s['audio'], s['visemes'], filename='out_ref.mp4')
 t = AudioMFCC(num_mels=mels)
 ds = Downsample()

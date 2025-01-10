@@ -137,9 +137,23 @@ class Downsample(nn.Module):
         a = sample['audio']
         # Visemes needs to have batch etc. stuff in front, then also be float to work
         v = self.transform_viseme(sample['visemes'].reshape((1, 1, -1)).to(torch.float)).reshape((-1,))
+        vout = v[:]
+        last_viseme = -1
+        dur = 2
+        for i in range(v.shape[0]):
+            if dur > 1:
+                if v[i] == last_viseme:
+                    dur += 1
+                else:
+                    dur = 1
+                    last_viseme = v[i]
+            else:
+                dur += 1
+            vout[i] = last_viseme
+
         return {
             'audio': a,
-            'visemes': v,
+            'visemes': vout,
         }
 
 class PadVisemes(nn.Module):
