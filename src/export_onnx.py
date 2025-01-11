@@ -17,6 +17,9 @@ layers = 2
 max_time = 10
 
 model = NeuralNet(input_size, hidden_size, layers, num_classes)
+
+d = torch.load('./checkpoints/model-2-80-dropout.pt', weights_only=True, map_location=torch.device('cpu'))
+model.load_state_dict(d)
 model.eval()
 
 x = torch.randn(1, max_time, feature_dims)
@@ -41,6 +44,8 @@ def to_numpy(tensor):
     return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
 
 ort_inputs = {ort_session.get_inputs()[0].name: to_numpy(x)}
+print(ort_inputs)
+print(ort_inputs['input'].shape)
 ort_outs = ort_session.run(None, ort_inputs)
 out = np.array(ort_outs[0])
 

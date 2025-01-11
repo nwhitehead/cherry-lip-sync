@@ -3,7 +3,7 @@ import torchaudio
 import onnxruntime
 import numpy as np
 
-ort_session = onnxruntime.InferenceSession("data/model-2-80-dropout.onnx")
+ort_session = onnxruntime.InferenceSession("./data/model-2-80-dropout.onnx")
 
 from data import LipsyncDataset, AudioMFCC, Upsample, Downsample, PadVisemes, RandomChunk
 
@@ -39,7 +39,9 @@ t = AudioMFCC(num_mels=mels)
 ds = Downsample()
 ma = t(s)['audio'].unsqueeze(0).permute(0, 2, 1).cpu().numpy()
 print(ma.shape, ma[0, 20, :])
-out = ort_session.run(None, {'input': ma})
+inputs =  {'input': ma}
+print(inputs)
+out = ort_session.run(None, inputs)
 o = np.array(out[0])
 print(o.shape)
 print(o[:, 0, :])
