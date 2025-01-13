@@ -11,6 +11,7 @@ use burn::prelude::Backend;
 use burn::module::ConstantRecord;
 use burn::module::Param;
 use burn::module::ParamId;
+use burn::record::Record;
 
 mod model;
 
@@ -58,14 +59,19 @@ fn main() {
         .expect("Should decode state successfully");
     let model = ModelConfig::new().init::<Backend>(&device).load_record(record);
 
+    // let trecord: FloatTensorRecord<Backend, 2> =
+    //     PyTorchFileRecorder::<FullPrecisionSettings>::new()
+    //         .load("blah".into(), &device)
+    //         .expect("Load tensor");
+    // let x = trecord.into_item::<FullPrecisionSettings>();
+
     let trecord: FloatTensorRecord<Backend, 2> =
         PyTorchFileRecorder::<FullPrecisionSettings>::new()
             .load("blah".into(), &device)
             .expect("Load tensor");
-    let id = ParamId::new();
-    let orig_tensor = Tensor::<Backend, 2>::zeros([10, 30], &device);
+    let orig_tensor = Tensor::<Backend, 2>::zeros([0, 0], &device);
     let tensor = FloatTensor::<Backend, 2> {
-        test: Param::<>::initialized(id, orig_tensor),
+        test: Param::initialized(ParamId::new(), orig_tensor),
     };
     let tensor = tensor.load_record(trecord);
     // model
@@ -81,6 +87,6 @@ fn main() {
     //     .save_file("test", &recorder)
     //     .expect("Save the model");
     println!("{}", model);
+    // println!("{:?}", x.test.val());
     println!("{:?}", tensor.test.val());
-    // println!("{:?}", args);
 }
