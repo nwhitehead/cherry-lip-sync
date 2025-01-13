@@ -5,7 +5,8 @@ use burn::{
         gru::{Gru, GruConfig},
         Dropout, DropoutConfig, Linear, LinearConfig, Relu,
     },
-    prelude::*,
+    prelude::{Module, Tensor, Config, Backend},
+    record::*,
 };
 
 #[derive(Module, Debug)]
@@ -26,7 +27,7 @@ pub struct ModelConfig {
     input_size: usize,
     #[config(default = "12")]
     num_classes: usize,
-    #[config(default = "100")]
+    #[config(default = "80")]
     hidden_size: usize,
     #[config(default = "0.2")]
     dropout: f64,
