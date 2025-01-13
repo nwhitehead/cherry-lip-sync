@@ -69,11 +69,9 @@ fn main() {
         PyTorchFileRecorder::<FullPrecisionSettings>::new()
             .load("blah".into(), &device)
             .expect("Load tensor");
-    let orig_tensor = Tensor::<Backend, 2>::zeros([0, 0], &device);
-    let tensor = FloatTensor::<Backend, 2> {
-        test: Param::initialized(ParamId::new(), orig_tensor),
-    };
-    let tensor = tensor.load_record(trecord);
+
+    let x = trecord.test.val();
+
     // model
     //     .clone()
     //     .save_file("test", &recorder)
@@ -88,5 +86,5 @@ fn main() {
     //     .expect("Save the model");
     println!("{}", model);
     // println!("{:?}", x.test.val());
-    println!("{:?}", tensor.test.val());
+    println!("{:?}", x);
 }
