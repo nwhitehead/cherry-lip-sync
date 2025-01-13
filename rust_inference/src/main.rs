@@ -6,13 +6,24 @@ use burn::record::NamedMpkFileRecorder;
 use burn::record::{FullPrecisionSettings, Recorder};
 use burn_import::pytorch::{LoadArgs, PyTorchFileRecorder};
 use burn::record::PrettyJsonFileRecorder;
+use burn::prelude::Tensor;
+use burn::prelude::Backend;
+use burn::module::ConstantRecord;
+use burn::module::Param;
+use burn::module::ParamId;
 
 mod model;
+
+#[derive(Module, Debug)]
+struct FloatTensor<B: Backend, const D: usize> {
+    test: Param<Tensor<B, D>>,
+}
 
 fn main() {
     type Backend = burn::backend::NdArray;
 
     let device = Default::default();
+
     let args = LoadArgs::new("./model-2-80-dropout.ptx".into())
         .with_key_remap("net\\.1\\.weight_ih_l0.r", "gru1.reset_gate.input_transform.weight")
         .with_key_remap("net\\.1\\.weight_ih_l0.z", "gru1.update_gate.input_transform.weight")
@@ -40,13 +51,23 @@ fn main() {
         .with_key_remap("net\\.1\\.bias_hh_l1.n", "gru2.new_gate.hidden_transform.bias")
         .with_key_remap("net\\.3\\.(.*)", "proj.$1")
         .with_debug_print();
-    // let recorder = PrettyJsonFileRecorder::<FullPrecisionSettings>::default();
-    // let recorder = NamedMpkFileRecorder::<FullPrecisionSettings>::new();
+
     let recorder = PyTorchFileRecorder::<FullPrecisionSettings>::new();
     let record = recorder
         .load(args.clone(), &device)
         .expect("Should decode state successfully");
     let model = ModelConfig::new().init::<Backend>(&device).load_record(record);
+
+    let trecord: FloatTensorRecord<Backend, 2> =
+        PyTorchFileRecorder::<FullPrecisionSettings>::new()
+            .load("blah".into(), &device)
+            .expect("Load tensor");
+    let id = ParamId::new();
+    let orig_tensor = Tensor::<Backend, 2>::zeros([10, 30], &device);
+    let tensor = FloatTensor::<Backend, 2> {
+        test: Param::<>::initialized(id, orig_tensor),
+    };
+    let tensor = tensor.load_record(trecord);
     // model
     //     .clone()
     //     .save_file("test", &recorder)
@@ -60,5 +81,6 @@ fn main() {
     //     .save_file("test", &recorder)
     //     .expect("Save the model");
     println!("{}", model);
+    println!("{:?}", tensor.test.val());
     // println!("{:?}", args);
 }
