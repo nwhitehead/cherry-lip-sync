@@ -32,14 +32,14 @@ mels = 13
 feature_dims = mels * 2
 lookahead_frames = 6
 input_size = feature_dims
-hidden_size = 80
 num_classes = len(viseme_labels)
+hidden_size = num_classes
 num_epochs = 200
 batch_size = 20
 learning_rate = 0.001
 batch_time = 200
 validate_every = 1
-layers = 2
+layers = 1
 seed = 1
 
 model = NeuralNet(input_size, hidden_size, layers, num_classes)

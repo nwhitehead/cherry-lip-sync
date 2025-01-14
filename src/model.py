@@ -6,10 +6,10 @@ class NeuralNet(nn.Module):
     def __init__(self, input_size, hidden_size, layers, num_classes):
         super(NeuralNet, self).__init__()
         layers = [
-            nn.Dropout(p=0.2),
-            nn.GRU(input_size, hidden_size, num_layers=layers, batch_first=True, dropout=0.2),
+            # nn.Dropout(p=0.2),
+            nn.GRU(input_size, hidden_size, num_layers=layers, batch_first=True),
             SelectItem(0),
-            nn.Linear(hidden_size, num_classes),
+            # nn.Linear(hidden_size, num_classes),
         ]
         self.net = nn.Sequential(*layers)
 
