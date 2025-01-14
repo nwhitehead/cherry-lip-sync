@@ -1,7 +1,7 @@
 import torch
 from collections import OrderedDict
 
-s = torch.load('./model-2-80-dropout.pt', map_location=torch.device('cpu'))
+s = torch.load('./model-1-12.pt', map_location=torch.device('cpu'))
 out = OrderedDict(s)
 for k in s:
     if '_ih_' in k or '_hh_' in k:
@@ -18,4 +18,4 @@ for k in s:
     else:
         out[k] = s[k]
 
-torch.save(out, './model-2-80-dropout.ptx')
+torch.save(out, './model-1-12.ptx')

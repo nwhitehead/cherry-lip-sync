@@ -33,31 +33,19 @@ fn main() {
 
     let device = Default::default();
 
-    let args = LoadArgs::new("./model-2-80-dropout.ptx".into())
-        .with_key_remap("net\\.1\\.weight_ih_l0.r", "gru1.reset_gate.input_transform.weight")
-        .with_key_remap("net\\.1\\.weight_ih_l0.z", "gru1.update_gate.input_transform.weight")
-        .with_key_remap("net\\.1\\.weight_ih_l0.n", "gru1.new_gate.input_transform.weight")
-        .with_key_remap("net\\.1\\.weight_hh_l0.r", "gru1.reset_gate.hidden_transform.weight")
-        .with_key_remap("net\\.1\\.weight_hh_l0.z", "gru1.update_gate.hidden_transform.weight")
-        .with_key_remap("net\\.1\\.weight_hh_l0.n", "gru1.new_gate.hidden_transform.weight")
-        .with_key_remap("net\\.1\\.bias_ih_l0.r", "gru1.reset_gate.input_transform.bias")
-        .with_key_remap("net\\.1\\.bias_ih_l0.z", "gru1.update_gate.input_transform.bias")
-        .with_key_remap("net\\.1\\.bias_ih_l0.n", "gru1.new_gate.input_transform.bias")
-        .with_key_remap("net\\.1\\.bias_hh_l0.r", "gru1.reset_gate.hidden_transform.bias")
-        .with_key_remap("net\\.1\\.bias_hh_l0.z", "gru1.update_gate.hidden_transform.bias")
-        .with_key_remap("net\\.1\\.bias_hh_l0.n", "gru1.new_gate.hidden_transform.bias")
-        .with_key_remap("net\\.1\\.weight_ih_l1.r", "gru2.reset_gate.input_transform.weight")
-        .with_key_remap("net\\.1\\.weight_ih_l1.z", "gru2.update_gate.input_transform.weight")
-        .with_key_remap("net\\.1\\.weight_ih_l1.n", "gru2.new_gate.input_transform.weight")
-        .with_key_remap("net\\.1\\.weight_hh_l1.r", "gru2.reset_gate.hidden_transform.weight")
-        .with_key_remap("net\\.1\\.weight_hh_l1.z", "gru2.update_gate.hidden_transform.weight")
-        .with_key_remap("net\\.1\\.weight_hh_l1.n", "gru2.new_gate.hidden_transform.weight")
-        .with_key_remap("net\\.1\\.bias_ih_l1.r", "gru2.reset_gate.input_transform.bias")
-        .with_key_remap("net\\.1\\.bias_ih_l1.z", "gru2.update_gate.input_transform.bias")
-        .with_key_remap("net\\.1\\.bias_ih_l1.n", "gru2.new_gate.input_transform.bias")
-        .with_key_remap("net\\.1\\.bias_hh_l1.r", "gru2.reset_gate.hidden_transform.bias")
-        .with_key_remap("net\\.1\\.bias_hh_l1.z", "gru2.update_gate.hidden_transform.bias")
-        .with_key_remap("net\\.1\\.bias_hh_l1.n", "gru2.new_gate.hidden_transform.bias")
+    let args = LoadArgs::new("./model-1-12.ptx".into())
+        .with_key_remap("net\\.0\\.weight_ih_l0.r", "gru1.reset_gate.input_transform.weight")
+        .with_key_remap("net\\.0\\.weight_ih_l0.z", "gru1.update_gate.input_transform.weight")
+        .with_key_remap("net\\.0\\.weight_ih_l0.n", "gru1.new_gate.input_transform.weight")
+        .with_key_remap("net\\.0\\.weight_hh_l0.r", "gru1.reset_gate.hidden_transform.weight")
+        .with_key_remap("net\\.0\\.weight_hh_l0.z", "gru1.update_gate.hidden_transform.weight")
+        .with_key_remap("net\\.0\\.weight_hh_l0.n", "gru1.new_gate.hidden_transform.weight")
+        .with_key_remap("net\\.0\\.bias_ih_l0.r", "gru1.reset_gate.input_transform.bias")
+        .with_key_remap("net\\.0\\.bias_ih_l0.z", "gru1.update_gate.input_transform.bias")
+        .with_key_remap("net\\.0\\.bias_ih_l0.n", "gru1.new_gate.input_transform.bias")
+        .with_key_remap("net\\.0\\.bias_hh_l0.r", "gru1.reset_gate.hidden_transform.bias")
+        .with_key_remap("net\\.0\\.bias_hh_l0.z", "gru1.update_gate.hidden_transform.bias")
+        .with_key_remap("net\\.0\\.bias_hh_l0.n", "gru1.new_gate.hidden_transform.bias")
         .with_key_remap("net\\.3\\.(.*)", "proj.$1")
         .with_debug_print();
 
@@ -90,7 +78,7 @@ fn main() {
     //     .expect("Save the model");
     println!("{}", model);
     // println!("{:?}", x.test.val());
-    println!("{:?}", x);
-    println!("{:?}", y);
-    println!("{:?}", out);
+    println!("input tensor = {:?}", x);
+    println!("rust model output = {:?}", y);
+    println!("torch model output = {:?}", out);
 }
