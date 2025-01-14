@@ -1,7 +1,10 @@
 import torch
 from collections import OrderedDict
+import sys
 
-s = torch.load('./model-1-12.pt', map_location=torch.device('cpu'))
+filename = sys.argv[1]
+
+s = torch.load(filename, map_location=torch.device('cpu'), weights_only=True)
 out = OrderedDict(s)
 for k in s:
     if '_ih_' in k or '_hh_' in k:
@@ -14,8 +17,8 @@ for k in s:
                 x = s[k][i * h:i * h + h]
             else:
                 x = s[k][i * h:i * h + h, :]
-            out[f'{k}.{['r', 'z', 'n'][i]}'] = x
+            out[f'{k}.{["r", "z", "n"][i]}'] = x
     else:
         out[k] = s[k]
 
-torch.save(out, './model-1-12.ptx')
+torch.save(out, f'{filename}x')

@@ -14,11 +14,11 @@ pub struct Model<B: Backend> {
 
 #[derive(Config, Debug)]
 pub struct ModelConfig {
-    #[config(default = "26")]
+    #[config(default = "3")]
     input_size: usize,
-    #[config(default = "12")]
+    #[config(default = "3")]
     num_classes: usize,
-    #[config(default = "12")]
+    #[config(default = "3")]
     hidden_size: usize,
     #[config(default = "0.2")]
     dropout: f64,

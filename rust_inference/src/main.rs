@@ -33,7 +33,7 @@ fn main() {
 
     let device = Default::default();
 
-    let args = LoadArgs::new("./model-1-12.ptx".into())
+    let args = LoadArgs::new("./model-random3.ptx".into())
         .with_key_remap("net\\.0\\.weight_ih_l0.r", "gru1.reset_gate.input_transform.weight")
         .with_key_remap("net\\.0\\.weight_ih_l0.z", "gru1.update_gate.input_transform.weight")
         .with_key_remap("net\\.0\\.weight_ih_l0.n", "gru1.new_gate.input_transform.weight")
