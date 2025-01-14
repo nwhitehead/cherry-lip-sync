@@ -20,6 +20,14 @@ struct FloatTensor<B: Backend, const D: usize> {
     test: Param<Tensor<B, D>>,
 }
 
+fn load_tensor<B: Backend, const D: usize>(path: &str) -> Tensor<B, D> {
+    let trecord: FloatTensorRecord<B, D> =
+        PyTorchFileRecorder::<FullPrecisionSettings>::new()
+            .load(path.into(), &Default::default())
+            .expect("Load tensor");
+    return trecord.test.val();
+}
+
 fn main() {
     type Backend = burn::backend::NdArray;
 
@@ -65,13 +73,9 @@ fn main() {
     //         .expect("Load tensor");
     // let x = trecord.into_item::<FullPrecisionSettings>();
 
-    let trecord: FloatTensorRecord<Backend, 2> =
-        PyTorchFileRecorder::<FullPrecisionSettings>::new()
-            .load("blah".into(), &device)
-            .expect("Load tensor");
-
-    let x = trecord.test.val();
-
+    let x = load_tensor::<Backend, 3>("../data/test_in_0.pt");
+    let y = model.forward(x.clone());
+    let out = load_tensor::<Backend, 3>("../data/test_out_0.pt");
     // model
     //     .clone()
     //     .save_file("test", &recorder)
@@ -87,4 +91,6 @@ fn main() {
     println!("{}", model);
     // println!("{:?}", x.test.val());
     println!("{:?}", x);
+    println!("{:?}", y);
+    println!("{:?}", out);
 }

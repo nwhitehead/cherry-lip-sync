@@ -18,7 +18,7 @@ layers = 2
 
 model = NeuralNet(input_size, hidden_size, layers, num_classes)
 
-d = torch.load('checkpoints/model-199.pt', weights_only=True, map_location=torch.device('cpu'))
+d = torch.load('checkpoints/model-2-80-dropout.pt', weights_only=True, map_location=torch.device('cpu'))
 model.load_state_dict(d)
 model.eval()
 
@@ -33,7 +33,9 @@ for i in range(20):
     ma = t(s)['audio']
     ma = torch.unsqueeze(ma, 0)
     ma = ma.permute(0, 2, 1)
+    torch.save({ 'test': ma}, f'test_in_{i}.pt')
     out = model(ma)
+    torch.save({ 'test': out}, f'test_out_{i}.pt')
     _, v = torch.max(out.data, 2)
     v = v[:, lookahead_frames:]
     dsv = ds({ 'audio': s['audio'], 'visemes': v, })['visemes']

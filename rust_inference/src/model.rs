@@ -63,9 +63,9 @@ impl<B: Backend> Model<B> {
         let x = input;
         let x = self.dropout1.forward(x);
         let x = self.gru1.forward(x, None);
-        let x = self.dropout2.forward(x);
-        let x = self.gru2.forward(x, None);
-        let x = self.proj.forward(x);
+        // let x = self.dropout2.forward(x);
+        // let x = self.gru2.forward(x, None);
+        // let x = self.proj.forward(x);
         x
     }
 }
