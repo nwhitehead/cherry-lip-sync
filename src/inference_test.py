@@ -12,13 +12,13 @@ mels = 13
 feature_dims = mels * 2
 lookahead_frames = 6
 input_size = feature_dims
-hidden_size = 80
 num_classes = len(viseme_labels)
-layers = 2
+hidden_size = num_classes
+layers = 1
 
 model = NeuralNet(input_size, hidden_size, layers, num_classes)
 
-d = torch.load('checkpoints/model-2-80-dropout.pt', weights_only=True, map_location=torch.device('cpu'))
+d = torch.load('rust_inference/model-1-12.pt', weights_only=True, map_location=torch.device('cpu'))
 model.load_state_dict(d)
 model.eval()
 
