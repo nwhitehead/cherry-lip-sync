@@ -7,9 +7,9 @@ use std::vec::Vec;
 
 mod model;
 
-static MODEL_BYTES: &[u8] = include_bytes!("../../data/model.bin");
-static TENSOR_IN_BYTES: &[u8] = include_bytes!("../../data/test_in.bin");
-static TENSOR_OUT_BYTES: &[u8] = include_bytes!("../../data/test_out.bin");
+static MODEL_BYTES: &[u8] = include_bytes!("../model/model.bin");
+static TENSOR_IN_BYTES: &[u8] = include_bytes!("../model/test_in.bin");
+static TENSOR_OUT_BYTES: &[u8] = include_bytes!("../model/test_out.bin");
 
 fn load_tensor<B: Backend, const D: usize>(data: Vec<u8>) -> Tensor<B, D> {
     let recorder = BinBytesRecorder::<FullPrecisionSettings>::new();

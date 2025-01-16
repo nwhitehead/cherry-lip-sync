@@ -23,8 +23,7 @@ fn load_tensor<B: Backend, const D: usize>(path: &str) -> Tensor<B, D> {
 }
 
 fn save_tensor<B: Backend, const D: usize>(x: Tensor<B, D>, path: &str) {
-    let recorder = BinFileRecorder::<FullPrecisionSettings>::new();
-    let record = recorder
+    BinFileRecorder::<FullPrecisionSettings>::new()
         .record(x, path.into())
         .expect("Should decode state successfully");
 }
