@@ -17,8 +17,8 @@ for k in s:
                 x = s[k][i * h:i * h + h]
             else:
                 x = s[k][i * h:i * h + h, :]
-            out[f'{k}.{["r", "z", "n"][i]}'] = x
+            out[f'{k}.{["r", "z", "n"][i]}'] = x.clone()
     else:
-        out[k] = s[k]
+        out[k] = s[k].clone()
 
 torch.save(out, f'{filename}x')

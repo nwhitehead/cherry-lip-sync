@@ -33,7 +33,7 @@ fn main() {
 
     let device = Default::default();
 
-    let args = LoadArgs::new("./model-random3.ptx".into())
+    let args = LoadArgs::new("./model-random23.ptx".into())
         .with_key_remap("net\\.0\\.weight_ih_l0.r", "gru1.reset_gate.input_transform.weight")
         .with_key_remap("net\\.0\\.weight_ih_l0.z", "gru1.update_gate.input_transform.weight")
         .with_key_remap("net\\.0\\.weight_ih_l0.n", "gru1.new_gate.input_transform.weight")
@@ -55,15 +55,21 @@ fn main() {
         .expect("Should decode state successfully");
     let model = ModelConfig::new().init::<Backend>(&device).load_record(record);
 
+    // Save model in MessagePack format with full precision
+    let recorder = PrettyJsonFileRecorder::<FullPrecisionSettings>::new();
+    model
+        .clone()
+        .save_file("./output.json", &recorder)
+        .expect("Should be able to save the model");
     // let trecord: FloatTensorRecord<Backend, 2> =
     //     PyTorchFileRecorder::<FullPrecisionSettings>::new()
     //         .load("blah".into(), &device)
     //         .expect("Load tensor");
     // let x = trecord.into_item::<FullPrecisionSettings>();
 
-    let x = load_tensor::<Backend, 3>("../data/test_in_0.pt");
+    let x = load_tensor::<Backend, 3>("../data/test_in23.pt");
     let y = model.forward(x.clone());
-    let out = load_tensor::<Backend, 3>("../data/test_out_0.pt");
+    let out = load_tensor::<Backend, 3>("../data/test_out23.pt");
     // model
     //     .clone()
     //     .save_file("test", &recorder)
@@ -77,6 +83,10 @@ fn main() {
     //     .save_file("test", &recorder)
     //     .expect("Save the model");
     println!("{}", model);
+    println!("gru1.update_gate.input_transform.weight = {:?}", model.gru1.update_gate.input_transform.weight.val());
+    println!("gru1.update_gate.input_transform.bias = {:?}", model.gru1.update_gate.input_transform.bias.unwrap().val());
+    println!("gru1.update_gate.hidden_transform.weight = {:?}", model.gru1.update_gate.hidden_transform.weight.val());
+    println!("gru1.update_gate.hidden_transform.bias = {:?}", model.gru1.update_gate.hidden_transform.bias.unwrap().val());
     // println!("{:?}", x.test.val());
     println!("input tensor = {:?}", x);
     println!("rust model output = {:?}", y);

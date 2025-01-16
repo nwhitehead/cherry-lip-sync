@@ -9,17 +9,17 @@ use burn::{
 
 #[derive(Module, Debug)]
 pub struct Model<B: Backend> {
-    gru1: Gru<B>,
+    pub gru1: Gru<B>,
 }
 
 #[derive(Config, Debug)]
 pub struct ModelConfig {
-    #[config(default = "3")]
+    #[config(default = "2")]
     input_size: usize,
     #[config(default = "3")]
-    num_classes: usize,
-    #[config(default = "3")]
     hidden_size: usize,
+    #[config(default = "1")]
+    num_classes: usize,
     #[config(default = "0.2")]
     dropout: f64,
 }

@@ -1,0 +1,8 @@
+[package]
+name = "inference"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+burn = { git = "https://github.com/nwhitehead/burn.git", features = ["ndarray"] }
+burn-import = { git = "https://github.com/nwhitehead/burn.git" }
