@@ -11,6 +11,7 @@ class NeuralNet(nn.Module):
             nn.GRU(input_size, hidden_size, batch_first=True),
             SelectItem(0),
         ] + [
+            nn.Dropout(p=0.5),
             nn.GRU(hidden_size, hidden_size, batch_first=True),
             SelectItem(0),
         ] * (layers - 1) + [
