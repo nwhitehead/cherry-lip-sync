@@ -1,7 +1,7 @@
 use crate::model::ModelConfig;
 use burn::module::Module;
 use burn::record::NamedMpkFileRecorder;
-use burn::record::{FullPrecisionSettings, Recorder};
+use burn::record::{FullPrecisionSettings, HalfPrecisionSettings, Recorder};
 use burn_import::pytorch::{LoadArgs, PyTorchFileRecorder};
 
 mod model;
@@ -52,6 +52,12 @@ fn main() {
     model
         .clone()
         .save_file("../data/model", &recorder)
+        .expect("Should be able to save the model");
+    // Now save in half precision
+    let recorder = NamedMpkFileRecorder::<HalfPrecisionSettings>::new();
+    model
+        .clone()
+        .save_file("../data/model-half", &recorder)
         .expect("Should be able to save the model");
     println!("Model converted from PyTorch to Rust binary format");
 }

@@ -43,6 +43,7 @@ impl<B: Backend> Model<B> {
     /// # Shapes
     ///   - Images [batch_size, time, input_size]
     ///   - Output [batch_size, time, output_classes]
+    #[allow(dead_code)]
     pub fn forward(&self, input: Tensor<B, 3>) -> Tensor<B, 3> {
         let x = input;
         let x = self.gru1.forward(x, None);

@@ -1,7 +1,7 @@
 use crate::model::ModelConfig;
 use burn::module::Module;
 use burn::record::NamedMpkFileRecorder;
-use burn::record::{FullPrecisionSettings, Recorder};
+use burn::record::{FullPrecisionSettings, HalfPrecisionSettings, Recorder};
 use burn_import::pytorch::PyTorchFileRecorder;
 use burn::prelude::Tensor;
 use burn::prelude::Backend;
@@ -27,9 +27,9 @@ fn main() {
 
     let device = Default::default();
 
-    let recorder = NamedMpkFileRecorder::<FullPrecisionSettings>::new();
+    let recorder = NamedMpkFileRecorder::<HalfPrecisionSettings>::new();
     let record = recorder
-        .load("../data/model".into(), &device)
+        .load("../data/model-half".into(), &device)
         .expect("Should decode state successfully");
     let model = ModelConfig::new().init::<Backend>(&device).load_record(record);
 
@@ -40,4 +40,6 @@ fn main() {
     println!("input tensor = {:?}", x);
     println!("rust model output = {:?}", y);
     println!("torch model output = {:?}", out);
+    out.to_data().assert_approx_eq(&y.to_data(), 3);
+    println!("Passed numeric test");
 }
