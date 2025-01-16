@@ -15,14 +15,12 @@ import wandb
 from model import NeuralNet
 from data import LipsyncDataset, AudioMFCC, Upsample, PadVisemes, RandomChunk
 from util import log_loss_color, log_epoch_color, log_validation_color
-from loss import ClassesLoss
 
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Sorted
 viseme_labels = ['Ah', 'D', 'Ee', 'F', 'L', 'M', 'Neutral', 'Oh', 'R', 'S', 'Uh', 'Woo']
-viseme_classes = torch.tensor([1, 2, 1, 2, 2, 0, 0, 1, 2, 2, 1, 1]).to(torch.long).to(device)
 
 # Audiorate
 rate = 16000
@@ -33,13 +31,13 @@ feature_dims = mels * 2
 lookahead_frames = 6
 input_size = feature_dims
 num_classes = len(viseme_labels)
-hidden_size = num_classes
+hidden_size = 80
 num_epochs = 200
 batch_size = 20
 learning_rate = 0.001
 batch_time = 200
 validate_every = 1
-layers = 1
+layers = 2
 seed = 1
 
 model = NeuralNet(input_size, hidden_size, layers, num_classes)
@@ -63,7 +61,7 @@ wandb.init(
 summary(model, input_size=(1, input_size))
 
 # Loss and optimizer
-criterion = ClassesLoss(classes=viseme_classes)
+criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)  
 
 # Train the model
@@ -129,9 +127,7 @@ with logging_redirect_tqdm():
         if (epoch + 1) % validate_every == 0:
             model.eval()
             with torch.no_grad():
-                correct = 0
-                correct_class = 0
-                total = 0
+                validate_losses = 0.0
 
                 # Validation step
                 for i, sample in tqdm(enumerate(test_loader), total=len(test_loader), desc='Sample', leave=False, colour='#FFD0FF'):
@@ -140,19 +136,12 @@ with logging_redirect_tqdm():
 
                     x = audio.permute(0, 2, 1)
                     outputs = model(x)
-                    # outputs is N T C
-                    _, predicted = torch.max(outputs.data, 2)
-                    # predicted is N T -> viseme
-                    left = predicted[:, lookahead_frames:]
+                    left = outputs[:, lookahead_frames:, :].permute(0, 2, 1)
                     right = visemes[:, :-lookahead_frames]
-                    total += right.nelement()
-                    correct += (left == right).sum().item()
-                    left_class = viseme_classes[left.to(torch.long)]
-                    right_class = viseme_classes[right.to(torch.long)]
-                    correct_class += (left_class == right_class).sum().item()
+                    loss = criterion(left, right)
+                    validate_losses += loss
 
-                accuracy = 100 * correct / total
-                class_accuracy = 100 * correct_class / total
-                wandb.log({'acc': accuracy, 'class_acc': class_accuracy})
-                log_validation_color('Accuracy: ', f'{accuracy:.5f}%\t{class_accuracy:.5f}%')
+                validate_loss = validate_losses / len(test_loader)
+                wandb.log({'validate_loss': validate_loss})
+                log_validation_color('Validation loss: ',  f'{validate_loss:.5f}')
                 torch.save(model.state_dict(), f'checkpoints/{checkpoint_name}-{epoch}.pt')
