@@ -6,7 +6,7 @@ use burn::{
     // nn::{
     //     Dropout, DropoutConfig,
     // }
-    prelude::{Module, Tensor, Config, Backend},
+    prelude::{Backend, Config, Module, Tensor},
 };
 
 #[derive(Module, Debug)]
@@ -32,8 +32,8 @@ impl ModelConfig {
     /// Returns the initialized model.
     pub fn init<B: Backend>(&self, device: &B::Device) -> Model<B> {
         Model {
-            gru1: GruConfig::new(self.input_size, self.hidden_size, /*bias=*/true).init(device),
-            gru2: GruConfig::new(self.hidden_size, self.hidden_size, /*bias=*/true).init(device),
+            gru1: GruConfig::new(self.input_size, self.hidden_size, /*bias=*/ true).init(device),
+            gru2: GruConfig::new(self.hidden_size, self.hidden_size, /*bias=*/ true).init(device),
             proj: LinearConfig::new(self.hidden_size, self.num_classes).init(device),
         }
     }

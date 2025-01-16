@@ -5,7 +5,6 @@ use burn::record::{FullPrecisionSettings, Recorder};
 
 mod model;
 
-
 fn main() {
     type Backend = burn::backend::NdArray;
 
@@ -15,7 +14,9 @@ fn main() {
     let record = recorder
         .load("../data/model".into(), &device)
         .expect("Should decode state successfully");
-    let model = ModelConfig::new().init::<Backend>(&device).load_record(record);
+    let model = ModelConfig::new()
+        .init::<Backend>(&device)
+        .load_record(record);
 
     println!("{}", model);
 }

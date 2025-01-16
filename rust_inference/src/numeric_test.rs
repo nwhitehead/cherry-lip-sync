@@ -1,26 +1,21 @@
 use crate::model::ModelConfig;
 use burn::module::Module;
-use burn::record::{BinBytesRecorder, FullPrecisionSettings, Recorder};
-use burn_import::pytorch::PyTorchFileRecorder;
-use burn::prelude::Tensor;
 use burn::prelude::Backend;
-use burn::module::Param;
+use burn::prelude::Tensor;
+use burn::record::{BinBytesRecorder, FullPrecisionSettings, Recorder};
+use std::vec::Vec;
 
 mod model;
 
 static MODEL_BYTES: &[u8] = include_bytes!("../../data/model.bin");
+static TENSOR_IN_BYTES: &[u8] = include_bytes!("../../data/test_in.bin");
+static TENSOR_OUT_BYTES: &[u8] = include_bytes!("../../data/test_out.bin");
 
-#[derive(Module, Debug)]
-struct FloatTensor<B: Backend, const D: usize> {
-    test: Param<Tensor<B, D>>,
-}
-
-fn load_tensor<B: Backend, const D: usize>(path: &str) -> Tensor<B, D> {
-    let trecord: FloatTensorRecord<B, D> =
-        PyTorchFileRecorder::<FullPrecisionSettings>::new()
-            .load(path.into(), &Default::default())
-            .expect("Load tensor");
-    return trecord.test.val();
+fn load_tensor<B: Backend, const D: usize>(data: Vec<u8>) -> Tensor<B, D> {
+    let recorder = BinBytesRecorder::<FullPrecisionSettings>::new();
+    return recorder
+        .load(data, &Default::default())
+        .expect("Load tensor");
 }
 
 fn main() {
@@ -32,11 +27,13 @@ fn main() {
     let record = recorder
         .load(MODEL_BYTES.to_vec(), &device)
         .expect("Should decode state successfully");
-    let model = ModelConfig::new().init::<Backend>(&device).load_record(record);
-
-    let x = load_tensor::<Backend, 3>("../data/test_in.pt");
+    let model = ModelConfig::new()
+        .init::<Backend>(&device)
+        .load_record(record);
+    println!("Model loaded");
+    let x = load_tensor::<Backend, 3>(TENSOR_IN_BYTES.to_vec());
     let y = model.forward(x.clone());
-    let out = load_tensor::<Backend, 3>("../data/test_out.pt");
+    let out = load_tensor::<Backend, 3>(TENSOR_OUT_BYTES.to_vec());
     println!("{}", model);
     println!("input tensor = {:?}", x);
     println!("rust model output = {:?}", y);
