@@ -33,7 +33,7 @@ fn main() {
 
     let device = Default::default();
 
-    let args = LoadArgs::new("./model-random23.ptx".into())
+    let args = LoadArgs::new("./model.ptx".into())
         .with_key_remap("net\\.0\\.weight_ih_l0.r", "gru1.reset_gate.input_transform.weight")
         .with_key_remap("net\\.0\\.weight_ih_l0.z", "gru1.update_gate.input_transform.weight")
         .with_key_remap("net\\.0\\.weight_ih_l0.n", "gru1.new_gate.input_transform.weight")
@@ -46,7 +46,19 @@ fn main() {
         .with_key_remap("net\\.0\\.bias_hh_l0.r", "gru1.reset_gate.hidden_transform.bias")
         .with_key_remap("net\\.0\\.bias_hh_l0.z", "gru1.update_gate.hidden_transform.bias")
         .with_key_remap("net\\.0\\.bias_hh_l0.n", "gru1.new_gate.hidden_transform.bias")
-        .with_key_remap("net\\.3\\.(.*)", "proj.$1")
+        .with_key_remap("net\\.2\\.weight_ih_l0.r", "gru2.reset_gate.input_transform.weight")
+        .with_key_remap("net\\.2\\.weight_ih_l0.z", "gru2.update_gate.input_transform.weight")
+        .with_key_remap("net\\.2\\.weight_ih_l0.n", "gru2.new_gate.input_transform.weight")
+        .with_key_remap("net\\.2\\.weight_hh_l0.r", "gru2.reset_gate.hidden_transform.weight")
+        .with_key_remap("net\\.2\\.weight_hh_l0.z", "gru2.update_gate.hidden_transform.weight")
+        .with_key_remap("net\\.2\\.weight_hh_l0.n", "gru2.new_gate.hidden_transform.weight")
+        .with_key_remap("net\\.2\\.bias_ih_l0.r", "gru2.reset_gate.input_transform.bias")
+        .with_key_remap("net\\.2\\.bias_ih_l0.z", "gru2.update_gate.input_transform.bias")
+        .with_key_remap("net\\.2\\.bias_ih_l0.n", "gru2.new_gate.input_transform.bias")
+        .with_key_remap("net\\.2\\.bias_hh_l0.r", "gru2.reset_gate.hidden_transform.bias")
+        .with_key_remap("net\\.2\\.bias_hh_l0.z", "gru2.update_gate.hidden_transform.bias")
+        .with_key_remap("net\\.2\\.bias_hh_l0.n", "gru2.new_gate.hidden_transform.bias")
+        .with_key_remap("net\\.4\\.(.*)", "proj.$1")
         .with_debug_print();
 
     let recorder = PyTorchFileRecorder::<FullPrecisionSettings>::new();
@@ -67,9 +79,9 @@ fn main() {
     //         .expect("Load tensor");
     // let x = trecord.into_item::<FullPrecisionSettings>();
 
-    let x = load_tensor::<Backend, 3>("../data/test_in23.pt");
+    let x = load_tensor::<Backend, 3>("../data/test_in.pt");
     let y = model.forward(x.clone());
-    let out = load_tensor::<Backend, 3>("../data/test_out23.pt");
+    let out = load_tensor::<Backend, 3>("../data/test_out.pt");
     // model
     //     .clone()
     //     .save_file("test", &recorder)
