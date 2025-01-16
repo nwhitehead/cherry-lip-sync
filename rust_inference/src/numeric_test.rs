@@ -1,13 +1,14 @@
 use crate::model::ModelConfig;
 use burn::module::Module;
-use burn::record::NamedMpkFileRecorder;
-use burn::record::{FullPrecisionSettings, HalfPrecisionSettings, Recorder};
+use burn::record::{BinBytesRecorder, FullPrecisionSettings, Recorder};
 use burn_import::pytorch::PyTorchFileRecorder;
 use burn::prelude::Tensor;
 use burn::prelude::Backend;
 use burn::module::Param;
 
 mod model;
+
+static MODEL_BYTES: &[u8] = include_bytes!("../../data/model.bin");
 
 #[derive(Module, Debug)]
 struct FloatTensor<B: Backend, const D: usize> {
@@ -27,9 +28,9 @@ fn main() {
 
     let device = Default::default();
 
-    let recorder = NamedMpkFileRecorder::<HalfPrecisionSettings>::new();
+    let recorder = BinBytesRecorder::<FullPrecisionSettings>::new();
     let record = recorder
-        .load("../data/model-half".into(), &device)
+        .load(MODEL_BYTES.to_vec(), &device)
         .expect("Should decode state successfully");
     let model = ModelConfig::new().init::<Backend>(&device).load_record(record);
 

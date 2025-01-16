@@ -1,7 +1,6 @@
 use crate::model::ModelConfig;
 use burn::module::Module;
-use burn::record::NamedMpkFileRecorder;
-use burn::record::{FullPrecisionSettings, HalfPrecisionSettings, Recorder};
+use burn::record::{NamedMpkFileRecorder, BinFileRecorder, FullPrecisionSettings, HalfPrecisionSettings, Recorder};
 use burn_import::pytorch::{LoadArgs, PyTorchFileRecorder};
 
 mod model;
@@ -48,10 +47,16 @@ fn main() {
     let model = ModelConfig::new().init::<Backend>(&device).load_record(record);
 
     // Save model in MessagePack format with full precision
-    let recorder = NamedMpkFileRecorder::<FullPrecisionSettings>::new();
+    let recorder = BinFileRecorder::<FullPrecisionSettings>::new();
     model
         .clone()
         .save_file("../data/model", &recorder)
+        .expect("Should be able to save the model");
+    // Save in bin format
+    let recorder = BinFileRecorder::<HalfPrecisionSettings>::new();
+    model
+        .clone()
+        .save_file("../data/model-half", &recorder)
         .expect("Should be able to save the model");
     // Now save in half precision
     let recorder = NamedMpkFileRecorder::<HalfPrecisionSettings>::new();
