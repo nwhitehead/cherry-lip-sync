@@ -4,5 +4,17 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-burn = { path = "/home/nwhitehead/projects/burn/crates/burn", features = ["ndarray"] }
-burn-import = { path = "/home/nwhitehead/projects/burn/crates/burn-import" }
+burn = { git = "https://github.com/nwhitehead/burn.git", features = ["ndarray"] }
+burn-import = { git = "https://github.com/nwhitehead/burn.git" }
+
+[[bin]]
+name = "convert_model"
+path = "src/convert_model.rs"
+
+[[bin]]
+name = "numeric_test"
+path = "src/numeric_test.rs"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"

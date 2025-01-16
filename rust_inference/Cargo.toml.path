@@ -1,8 +1,0 @@
-[package]
-name = "inference"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-burn = { path = "/home/nwhitehead/projects/burn/crates/burn", features = ["ndarray"] }
-burn-import = { path = "/home/nwhitehead/projects/burn/crates/burn-import" }

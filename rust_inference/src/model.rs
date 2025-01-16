@@ -1,10 +1,12 @@
 use burn::{
     nn::{
         gru::{Gru, GruConfig},
-        Dropout, DropoutConfig, Linear, LinearConfig, Relu,
+        Linear, LinearConfig,
     },
+    // nn::{
+    //     Dropout, DropoutConfig,
+    // }
     prelude::{Module, Tensor, Config, Backend},
-    record::*,
 };
 
 #[derive(Module, Debug)]
@@ -42,7 +44,6 @@ impl<B: Backend> Model<B> {
     ///   - Images [batch_size, time, input_size]
     ///   - Output [batch_size, time, output_classes]
     pub fn forward(&self, input: Tensor<B, 3>) -> Tensor<B, 3> {
-        let [batch_size, sequence_length, input_size] = input.dims();
         let x = input;
         let x = self.gru1.forward(x, None);
         let x = self.gru2.forward(x, None);

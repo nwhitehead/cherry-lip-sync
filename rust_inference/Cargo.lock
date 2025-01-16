@@ -250,6 +250,7 @@ checksum = "79296716171880943b8470b5f8d03aa55eb2e645a4874bdbb28adb49162e012c"
 [[package]]
 name = "burn"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-core",
  "burn-train",
@@ -258,6 +259,7 @@ dependencies = [
 [[package]]
 name = "burn-autodiff"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-common",
  "burn-tensor",
@@ -269,6 +271,7 @@ dependencies = [
 [[package]]
 name = "burn-candle"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-tensor",
  "candle-core",
@@ -279,6 +282,7 @@ dependencies = [
 [[package]]
 name = "burn-common"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "cubecl-common",
  "getrandom",
@@ -290,6 +294,7 @@ dependencies = [
 [[package]]
 name = "burn-core"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "ahash",
  "bincode",
@@ -326,6 +331,7 @@ dependencies = [
 [[package]]
 name = "burn-cuda"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-fusion",
  "burn-jit",
@@ -340,6 +346,7 @@ dependencies = [
 [[package]]
 name = "burn-dataset"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "csv",
  "derive-new 0.7.0",
@@ -364,6 +371,7 @@ dependencies = [
 [[package]]
 name = "burn-derive"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "derive-new 0.7.0",
  "proc-macro2",
@@ -374,6 +382,7 @@ dependencies = [
 [[package]]
 name = "burn-fusion"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-common",
  "burn-tensor",
@@ -388,6 +397,7 @@ dependencies = [
 [[package]]
 name = "burn-hip"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-fusion",
  "burn-jit",
@@ -402,6 +412,7 @@ dependencies = [
 [[package]]
 name = "burn-import"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn",
  "burn-ndarray",
@@ -426,6 +437,7 @@ dependencies = [
 [[package]]
 name = "burn-jit"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-common",
  "burn-fusion",
@@ -447,6 +459,7 @@ dependencies = [
 [[package]]
 name = "burn-ndarray"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "atomic_float",
  "burn-autodiff",
@@ -465,6 +478,7 @@ dependencies = [
 [[package]]
 name = "burn-router"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-common",
  "burn-tensor",
@@ -476,6 +490,7 @@ dependencies = [
 [[package]]
 name = "burn-tch"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-tensor",
  "half",
@@ -488,6 +503,7 @@ dependencies = [
 [[package]]
 name = "burn-tensor"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-common",
  "bytemuck",
@@ -507,6 +523,7 @@ dependencies = [
 [[package]]
 name = "burn-train"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "async-channel",
  "burn-core",
@@ -527,6 +544,7 @@ dependencies = [
 [[package]]
 name = "burn-wgpu"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "burn-fusion",
  "burn-jit",
@@ -2782,6 +2800,7 @@ checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
 [[package]]
 name = "onnx-ir"
 version = "0.17.0"
+source = "git+https://github.com/nwhitehead/burn.git#95a7eafc1eb2cdbc860d8f22b16d6a685323da57"
 dependencies = [
  "bytemuck",
  "half",
