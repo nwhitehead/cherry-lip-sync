@@ -58,7 +58,8 @@ wandb.init(
 )
 
 # Show model summary
-summary(model, input_size=(1, input_size))
+# Input is N T C
+summary(model, input_size=(1, 100, input_size))
 
 # Loss and optimizer
 criterion = nn.CrossEntropyLoss()
@@ -105,7 +106,7 @@ with logging_redirect_tqdm():
             # Input to model needs to be N T C
             x = audio.permute(0, 2, 1)
             outputs = model(x)
-            # Outpus is now N T C where C is number of visemes, numbers are raw logits (no softmax or anything)
+            # Output is now N T C where C is number of visemes, numbers are raw logits (no softmax or anything)
             # CrossEntropyLoss takes in N C T.
             # Now use lookahead to define relation between input timing and output expectations
             # Ignore first few predictions from model

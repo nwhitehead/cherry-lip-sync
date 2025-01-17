@@ -8,7 +8,42 @@ import torchvision
 from torchvision.transforms import v2
 from torch.utils.data import Dataset
 import pyarrow.parquet as pq
+from torch import Tensor
+from torchaudio.transforms import AmplitudeToDB, MelSpectrogram
+import torchaudio.functional as F
 
+class CustomMFCC(torch.nn.Module):
+    __constants__ = ["sample_rate", "n_mfcc"]
+
+    def __init__(
+        self,
+        sample_rate: int = 16000,
+        n_mfcc: int = 13,
+        melkwargs = None,
+    ) -> None:
+        super().__init__()
+        self.sample_rate = sample_rate
+        self.n_mfcc = n_mfcc
+        self.amplitude_to_DB = AmplitudeToDB("power", None)
+        melkwargs = melkwargs or {}
+        self.MelSpectrogram = MelSpectrogram(sample_rate=self.sample_rate, **melkwargs)
+        dct_mat = F.create_dct(self.n_mfcc, self.MelSpectrogram.n_mels, "ortho")
+        self.register_buffer("dct_mat", dct_mat)
+
+    def forward(self, waveform: Tensor) -> Tensor:
+        r"""
+        Args:
+            waveform (Tensor): Tensor of audio of dimension (..., time).
+
+        Returns:
+            Tensor: specgram_mel_db of size (..., ``n_mfcc``, time).
+        """
+        mel_specgram = self.MelSpectrogram(waveform)
+        mel_specgram = self.amplitude_to_DB(mel_specgram)
+
+        # (..., time, n_mels) dot (n_mels, n_mfcc) -> (..., n_mfcc, time)
+        mfcc = torch.matmul(mel_specgram.transpose(-1, -2), self.dct_mat).transpose(-1, -2)
+        return mfcc
 
 class LipsyncDataset(Dataset):
     """Audio to animated lip viseme dataset"""
@@ -92,8 +127,9 @@ class AudioMFCC(nn.Module):
             "n_fft": self.window_length,
             "win_length": self.window_length,
             "hop_length": self.hop_length,
+            "center": False,
         }
-        self.mfcc = torchaudio.transforms.MFCC(sample_rate=audio_rate, n_mfcc=num_mels, melkwargs=melkwargs)
+        self.mfcc = CustomMFCC(sample_rate=audio_rate, n_mfcc=num_mels, melkwargs=melkwargs)
 
     def __call__(self, sample):
         waveform = sample['audio']
@@ -104,7 +140,7 @@ class AudioMFCC(nn.Module):
         x = a.numpy()
         delta_a = np.apply_along_axis(np.convolve, axis=1, arr=x, v=d, mode='same')
         # Stack everything
-        a = torch.cat((torch.tensor(delta_a), a))
+        a = torch.cat((a, torch.tensor(delta_a)))
         return {
             'audio': a.to(torch.float),
             'visemes': v,
