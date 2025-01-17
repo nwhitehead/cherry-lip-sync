@@ -28,7 +28,7 @@ rate = 16000
 # Hyper-parameters
 mels = 13
 feature_dims = mels * 2
-lookahead_frames = 6
+lookahead_frames = 3
 input_size = feature_dims
 num_classes = len(viseme_labels)
 hidden_size = 80
@@ -111,7 +111,10 @@ with logging_redirect_tqdm():
             # Now use lookahead to define relation between input timing and output expectations
             # Ignore first few predictions from model
             left = outputs[:, lookahead_frames:, :].permute(0, 2, 1)
-            right = visemes[:, :-lookahead_frames]
+            if lookahead_frames > 0:
+                right = visemes[:, :-lookahead_frames]
+            else:
+                right = visemes[:, :]
             loss = criterion(left, right)
 
             # Backward and optimize
@@ -138,7 +141,10 @@ with logging_redirect_tqdm():
                     x = audio.permute(0, 2, 1)
                     outputs = model(x)
                     left = outputs[:, lookahead_frames:, :].permute(0, 2, 1)
-                    right = visemes[:, :-lookahead_frames]
+                    if lookahead_frames > 0:
+                        right = visemes[:, :-lookahead_frames]
+                    else:
+                        right = visemes[:, :]
                     loss = criterion(left, right)
                     validate_losses += loss
 
