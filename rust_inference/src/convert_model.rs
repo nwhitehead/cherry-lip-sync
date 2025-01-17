@@ -35,7 +35,7 @@ fn main() {
 
     // We need to remap the GRU weights because PyTorch saves them as concatenated matrices and
     // we have manually split them up into r/z/n.
-    let args = LoadArgs::new("./model.ptx".into())
+    let args = LoadArgs::new("./model/model.ptx".into())
         .with_key_remap(
             "(net\\.1\\.)(.+)",
             "bnorm.$2",
