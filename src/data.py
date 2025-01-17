@@ -27,8 +27,6 @@ class CustomMFCC(torch.nn.Module):
         self.amplitude_to_DB = AmplitudeToDB("power", None)
         melkwargs = melkwargs or {}
         self.MelSpectrogram = MelSpectrogram(sample_rate=self.sample_rate, **melkwargs)
-        dct_mat = F.create_dct(self.n_mfcc, self.MelSpectrogram.n_mels, "ortho")
-        self.register_buffer("dct_mat", dct_mat)
 
     def forward(self, waveform: Tensor) -> Tensor:
         r"""
@@ -40,10 +38,7 @@ class CustomMFCC(torch.nn.Module):
         """
         mel_specgram = self.MelSpectrogram(waveform)
         mel_specgram = self.amplitude_to_DB(mel_specgram)
-
-        # (..., time, n_mels) dot (n_mels, n_mfcc) -> (..., n_mfcc, time)
-        mfcc = torch.matmul(mel_specgram.transpose(-1, -2), self.dct_mat).transpose(-1, -2)
-        return mfcc
+        return mel_specgram
 
 class LipsyncDataset(Dataset):
     """Audio to animated lip viseme dataset"""
@@ -127,6 +122,7 @@ class AudioMFCC(nn.Module):
             "n_fft": self.window_length,
             "win_length": self.window_length,
             "hop_length": self.hop_length,
+            "n_mels": num_mels,
             "center": False,
         }
         self.mfcc = CustomMFCC(sample_rate=audio_rate, n_mfcc=num_mels, melkwargs=melkwargs)
