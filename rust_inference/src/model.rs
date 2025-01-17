@@ -11,7 +11,7 @@ use burn::{
 
 #[derive(Module, Debug)]
 pub struct Model<B: Backend> {
-    pub bnorm: BatchNorm<B, 3>,
+    pub bnorm: BatchNorm<B, 1>,
     pub gru1: Gru<B>,
     pub gru2: Gru<B>,
     pub proj: Linear<B>,
@@ -48,6 +48,8 @@ impl<B: Backend> Model<B> {
     #[allow(dead_code)]
     pub fn forward(&self, input: Tensor<B, 3>) -> Tensor<B, 3> {
         let x = input;
+        // BatchNorm needs N C T but our standard order is N T C
+        let x = self.bnorm.forward(x.permute([0, 2, 1])).permute([0, 2, 1]);
         let x = self.gru1.forward(x, None);
         let x = self.gru2.forward(x, None);
         let x = self.proj.forward(x);
