@@ -37,6 +37,10 @@ fn main() {
     // we have manually split them up into r/z/n.
     let args = LoadArgs::new("./model.ptx".into())
         .with_key_remap(
+            "(net\\.1\\.)(.+)",
+            "bnorm.$2",
+        )
+        .with_key_remap(
             "net\\.4\\.weight_ih_l0.r",
             "gru1.reset_gate.input_transform.weight",
         )

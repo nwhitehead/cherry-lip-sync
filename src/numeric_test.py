@@ -4,8 +4,8 @@ from model import NeuralNet
 # input, hidden, layers
 model = NeuralNet(26, 80, 2, 12)
 
-# # model is randomly initialized
-# torch.save(model.state_dict(), './rust_inference/model.pt')
+# model is randomly initialized
+torch.save(model.state_dict(), './rust_inference/model.pt')
 
 d = torch.load('./rust_inference/model.pt', weights_only=True, map_location=torch.device('cpu'))
 model.load_state_dict(d)

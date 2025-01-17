@@ -1,7 +1,7 @@
 use burn::{
     nn::{
         gru::{Gru, GruConfig},
-        Linear, LinearConfig,
+        BatchNorm, BatchNormConfig, Linear, LinearConfig,
     },
     // nn::{
     //     Dropout, DropoutConfig,
@@ -11,6 +11,7 @@ use burn::{
 
 #[derive(Module, Debug)]
 pub struct Model<B: Backend> {
+    pub bnorm: BatchNorm<B, 3>,
     pub gru1: Gru<B>,
     pub gru2: Gru<B>,
     pub proj: Linear<B>,
@@ -32,6 +33,7 @@ impl ModelConfig {
     /// Returns the initialized model.
     pub fn init<B: Backend>(&self, device: &B::Device) -> Model<B> {
         Model {
+            bnorm: BatchNormConfig::new(self.input_size).init(device),
             gru1: GruConfig::new(self.input_size, self.hidden_size, /*bias=*/ true).init(device),
             gru2: GruConfig::new(self.hidden_size, self.hidden_size, /*bias=*/ true).init(device),
             proj: LinearConfig::new(self.hidden_size, self.num_classes).init(device),
