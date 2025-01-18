@@ -1,22 +1,12 @@
-use crate::model::ModelConfig;
-use burn::module::Module;
-use burn::record::NamedMpkFileRecorder;
-use burn::record::{FullPrecisionSettings, Recorder};
-
-mod model;
+use burn_import::onnx::ModelGen;
+use burn_import::burn::graph::RecordType;
 
 fn main() {
-    type Backend = burn::backend::NdArray;
-
-    let device = Default::default();
-
-    let recorder = NamedMpkFileRecorder::<FullPrecisionSettings>::new();
-    let record = recorder
-        .load("../data/model".into(), &device)
-        .expect("Should decode state successfully");
-    let model = ModelConfig::new()
-        .init::<Backend>(&device)
-        .load_record(record);
-
-    println!("{}", model);
+    ModelGen::new()
+        .input("./model/model_simple.onnx")
+        .out_dir("./model/")
+        .record_type(RecordType::Bincode)
+        .half_precision(false)
+        .embed_states(true)
+        .run_from_script();
 }
