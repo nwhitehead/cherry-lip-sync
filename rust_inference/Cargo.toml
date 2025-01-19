@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-burn = { git = "https://github.com/nwhitehead/burn.git", features = ["ndarray"] }
-burn-import = { git = "https://github.com/nwhitehead/burn.git" }
+burn = { path = "../../burn/crates/burn", features = ["ndarray"] }
+burn-import = { path = "../../burn/crates/burn-import" }
 
 [[bin]]
 name = "convert_model"
@@ -18,3 +18,10 @@ path = "src/numeric_test.rs"
 [[bin]]
 name = "main"
 path = "src/main.rs"
+
+[profile.release]
+opt-level = 'z'     # Optimize for size
+lto = true          # Enable link-time optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations
+panic = 'abort'     # Abort on panic
+strip = true        # Strip symbols from binary*
