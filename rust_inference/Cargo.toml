@@ -4,20 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-burn = { path = "../../burn/crates/burn", features = ["ndarray"] }
-burn-import = { path = "../../burn/crates/burn-import" }
+burn = { version = "0.16.0", features = ["ndarray"] }
+burn-import = "0.16.0"
 
-[[bin]]
-name = "convert_model"
-path = "src/convert_model.rs"
-
-[[bin]]
-name = "numeric_test"
-path = "src/numeric_test.rs"
-
-[[bin]]
-name = "main"
-path = "src/main.rs"
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [profile.release]
 opt-level = 'z'     # Optimize for size
