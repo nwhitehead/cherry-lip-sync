@@ -6,6 +6,8 @@ edition = "2021"
 [dependencies]
 burn = { version = "0.16.0", features = ["ndarray"] }
 burn-import = "0.16.0"
+clap = { version = "4.5.27", features = ["derive"] }
+symphonium = { version = "0.2.2", features = ["mp3"] }
 
 [profile.release]
 opt-level = 'z'     # Optimize for size
