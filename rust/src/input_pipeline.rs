@@ -84,7 +84,7 @@ impl Pipeline {
         }
         self.fft.process(&mut input_buffer, &mut output_buffer).expect("Should be able to compute FFT");
         // Buffer now contains actual FFT results
-        //dbg!(&buffer);
-        hann_x
+        let power = output_buffer.iter().map(Complex::norm_sqr).collect();
+        Tensor::<B, 1>::from_data(TensorData::new(power, [FFT_LENGTH]), &device)
     }
 }
