@@ -7,6 +7,7 @@ edition = "2021"
 burn = { version = "0.16.0", features = ["ndarray"] }
 burn-import = "0.16.0"
 clap = { version = "4.5.27", features = ["derive"] }
+realfft = "3.4.0"
 rustfft = "6.2.0"
 symphonium = { version = "0.2.2", features = ["mp3"] }
 

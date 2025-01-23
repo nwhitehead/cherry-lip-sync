@@ -5,6 +5,7 @@ use burn::prelude::Tensor;
 use burn::prelude::TensorData;
 use rustfft::{FftPlanner, Fft, num_complex::Complex};
 use std::sync::Arc;
+use realfft::{RealFftPlanner, RealToComplex};
 
 use crate::hann::hann_window;
 
@@ -13,12 +14,13 @@ const WINDOW_TIME: f32 = 25e-3;
 const HOP_TIME: f32 = 10e-3;
 const WINDOW_LENGTH: usize = ((AUDIO_SAMPLERATE as f32) * WINDOW_TIME) as usize;
 const HOP_LENGTH: usize = ((AUDIO_SAMPLERATE as f32) * HOP_TIME) as usize;
+const FFT_LENGTH: usize = WINDOW_LENGTH / 2 + 1;
 
 pub struct Pipeline {
     buffer: Vec<f32>,
     sample: DecodedAudio,
     position: usize,
-    fft: Arc<dyn Fft<f32>>,
+    fft: Arc<dyn RealToComplex<f32>>,
 }
 
 impl Pipeline {
@@ -32,7 +34,7 @@ impl Pipeline {
         let num = sample.fill_channel(0, 0, &mut b);
         assert_eq!(num, Ok(sample.frames()));
         // Use FftPlanner to time implementations and record best for our size
-        let mut planner = FftPlanner::<f32>::new();
+        let mut planner = RealFftPlanner::<f32>::new();
         let fft = planner.plan_fft_forward(WINDOW_LENGTH);
         Self { buffer: b, sample, position: 0, fft }
     }
@@ -74,12 +76,13 @@ impl Pipeline {
         let x = Tensor::<B, 1>::from_data(TensorData::new(samples, [WINDOW_LENGTH]), &device);
         let hann = Tensor::<B, 1>::from_data(TensorData::new(hann_window(WINDOW_LENGTH), [WINDOW_LENGTH]), &device);
         let hann_x = x * hann;
-        let mut buffer = vec![Complex{ re: 0.0f32, im: 0.0f32 }; WINDOW_LENGTH];
+        let mut input_buffer = vec![0.0f32; WINDOW_LENGTH];
+        let mut output_buffer = vec![Complex{ re: 0.0f32, im: 0.0f32 }; FFT_LENGTH];
         // Fill real part of buffer with hann_x data
         for p in hann_x.clone().to_data().iter().enumerate() {
-            buffer[p.0] = Complex{ re: p.1, im: 0.0f32 };
+            input_buffer[p.0] = p.1;
         }
-        self.fft.process(&mut buffer);
+        self.fft.process(&mut input_buffer, &mut output_buffer).expect("Should be able to compute FFT");
         // Buffer now contains actual FFT results
         //dbg!(&buffer);
         hann_x
