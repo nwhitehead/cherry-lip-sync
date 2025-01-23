@@ -28,10 +28,11 @@ fn main() {
     let args = Args::parse();
     dbg!(&args);
     // Open input audio
-    let mut sample = Pipeline::new(&args.input);
+    let mut sample = Pipeline::<Backend>::new(&args.input);
     while !sample.done() {
-        let x = sample.processed::<Backend>();
-        println!("t={} sum={}", sample.position(), x.abs().sum());
+        let t = sample.position();
+        let x = sample.processed();
+        //println!("t={}\n{}", t, x);
     }
     dbg!(hann_window(5));
 }

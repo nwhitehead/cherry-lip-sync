@@ -3,6 +3,7 @@ use std::vec::Vec;
 use burn::prelude::Backend;
 use burn::prelude::Tensor;
 use burn::prelude::TensorData;
+use burn::record::{BinBytesRecorder, FullPrecisionSettings, Recorder};
 use rustfft::{FftPlanner, Fft, num_complex::Complex};
 use std::sync::Arc;
 use realfft::{RealFftPlanner, RealToComplex};
@@ -16,19 +17,32 @@ const WINDOW_LENGTH: usize = ((AUDIO_SAMPLERATE as f32) * WINDOW_TIME) as usize;
 const HOP_LENGTH: usize = ((AUDIO_SAMPLERATE as f32) * HOP_TIME) as usize;
 const FFT_LENGTH: usize = WINDOW_LENGTH / 2 + 1;
 
-pub struct Pipeline {
+static MELBANK_BYTES: &[u8] = include_bytes!("../model/melbank.bin");
+
+fn load_tensor<B: Backend, const D: usize>(data: Vec<u8>) -> Tensor<B, D> {
+    let recorder = BinBytesRecorder::<FullPrecisionSettings>::new();
+    return recorder
+        .load(data, &Default::default())
+        .expect("Load tensor");
+}
+
+pub struct Pipeline<B: Backend> {
     buffer: Vec<f32>,
     sample: DecodedAudio,
     position: usize,
     fft: Arc<dyn RealToComplex<f32>>,
+    hann: Tensor::<B, 1>,
+    melbanks: Tensor::<B, 2>,
+    device: B::Device,
 }
 
-impl Pipeline {
+impl<B: Backend> Pipeline<B> {
     pub fn new(filename: &String) -> Self {
         let mut loader = SymphoniumLoader::new();
         let sample = loader
             .load(&filename, Some(AUDIO_SAMPLERATE), ResampleQuality::High, None)
             .expect("Should be able to load audio into memory");
+        println!("Input size is {}", sample.frames());
         let mut b = Vec::with_capacity(sample.frames());
         b.resize(sample.frames(), 0.0);
         let num = sample.fill_channel(0, 0, &mut b);
@@ -36,7 +50,10 @@ impl Pipeline {
         // Use FftPlanner to time implementations and record best for our size
         let mut planner = RealFftPlanner::<f32>::new();
         let fft = planner.plan_fft_forward(WINDOW_LENGTH);
-        Self { buffer: b, sample, position: 0, fft }
+        let device = Default::default();
+        let hann = Tensor::<B, 1>::from_data(TensorData::new(hann_window(WINDOW_LENGTH), [WINDOW_LENGTH]), &device);
+        let melbanks = load_tensor::<B, 2>(MELBANK_BYTES.to_vec());
+        Self { buffer: b, sample, position: 0, fft, hann, melbanks, device }
     }
 
     /// Get current window position (seconds)
@@ -69,13 +86,12 @@ impl Pipeline {
     }
 
     /// Get next window of processed samples
-    pub fn processed<B: Backend>(&mut self) -> Tensor<B, 1> {
+    pub fn processed(&mut self) -> Tensor<B, 2> {
         // Setup Burn backend
-        let device = Default::default();
+        let show_x = self.position == HOP_LENGTH * 0;
         let samples = self.next();
-        let x = Tensor::<B, 1>::from_data(TensorData::new(samples, [WINDOW_LENGTH]), &device);
-        let hann = Tensor::<B, 1>::from_data(TensorData::new(hann_window(WINDOW_LENGTH), [WINDOW_LENGTH]), &device);
-        let hann_x = x * hann;
+        let x = Tensor::<B, 1>::from_data(TensorData::new(samples, [WINDOW_LENGTH]), &self.device);
+        let hann_x = x * self.hann.clone();
         let mut input_buffer = vec![0.0f32; WINDOW_LENGTH];
         let mut output_buffer = vec![Complex{ re: 0.0f32, im: 0.0f32 }; FFT_LENGTH];
         // Fill real part of buffer with hann_x data
@@ -85,6 +101,17 @@ impl Pipeline {
         self.fft.process(&mut input_buffer, &mut output_buffer).expect("Should be able to compute FFT");
         // Buffer now contains actual FFT results
         let power = output_buffer.iter().map(Complex::norm_sqr).collect();
-        Tensor::<B, 1>::from_data(TensorData::new(power, [FFT_LENGTH]), &device)
+        let pwr = Tensor::<B, 2>::from_data(TensorData::new(power, [1, FFT_LENGTH]), &self.device);
+        let res = pwr.matmul(self.melbanks.clone());
+        // Now do log power conversion
+        let res = res.clamp_min(1e-10).log() / std::f32::consts::LN_10 * 10.0;
+        if show_x {
+            // println!("x = {}", x.clone());
+            // println!("hann = {}", self.hann.clone());
+            // println!("hann * x = {}", hann_x.clone());
+            // println!("power = {}", pwr.clone());
+            println!("res = {}", res.clone());
+        }
+        res
     }
 }
