@@ -73,7 +73,15 @@ impl Pipeline {
         let samples = self.next();
         let x = Tensor::<B, 1>::from_data(TensorData::new(samples, [WINDOW_LENGTH]), &device);
         let hann = Tensor::<B, 1>::from_data(TensorData::new(hann_window(WINDOW_LENGTH), [WINDOW_LENGTH]), &device);
-        //let fx = self.fft(x);
-        x * hann
+        let hann_x = x * hann;
+        let mut buffer = vec![Complex{ re: 0.0f32, im: 0.0f32 }; WINDOW_LENGTH];
+        // Fill real part of buffer with hann_x data
+        for p in hann_x.clone().to_data().iter().enumerate() {
+            buffer[p.0] = Complex{ re: p.1, im: 0.0f32 };
+        }
+        self.fft.process(&mut buffer);
+        // Buffer now contains actual FFT results
+        //dbg!(&buffer);
+        hann_x
     }
 }
