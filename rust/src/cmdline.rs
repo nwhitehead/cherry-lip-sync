@@ -25,5 +25,12 @@ fn main() {
     let args = Args::parse();
     dbg!(&args);
     // Open input audio
-    let sample = Pipeline::new(&args.input);
+    let mut sample = Pipeline::new(&args.input);
+    loop {
+        let swin = sample.next();
+        println!("t={}", sample.position());
+        if sample.done() {
+            break;
+        }
+    }
 }
