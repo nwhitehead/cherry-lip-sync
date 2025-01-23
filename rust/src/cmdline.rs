@@ -31,7 +31,7 @@ fn main() {
     let mut sample = Pipeline::new(&args.input);
     while !sample.done() {
         let x = sample.processed::<Backend>();
-        println!("t={} sum={}", sample.position(), x.sum());
+        println!("t={} sum={}", sample.position(), x.abs().sum());
     }
     dbg!(hann_window(5));
 }

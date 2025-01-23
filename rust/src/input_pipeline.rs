@@ -67,7 +67,6 @@ impl Pipeline {
         let samples = self.next();
         let x = Tensor::<B, 1>::from_data(TensorData::new(samples, [WINDOW_LENGTH]), &device);
         let hann = Tensor::<B, 1>::from_data(TensorData::new(hann_window(WINDOW_LENGTH), [WINDOW_LENGTH]), &device);
-        //x
         x * hann
     }
 }
