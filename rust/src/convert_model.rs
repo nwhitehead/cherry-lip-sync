@@ -167,6 +167,10 @@ fn main() {
         .expect("Should be able to save the model");
     println!("Model converted from PyTorch to Rust binary format");
 
+    // Now convert melbank for audio input processing
+    let x = load_tensor::<Backend, 2>("../data/melbank.pt");
+    save_tensor(x, "../data/melbank");
+    
     // Now convert test input/output
     let x = load_tensor::<Backend, 3>("../data/test_in.pt");
     save_tensor(x, "../data/test_in");
