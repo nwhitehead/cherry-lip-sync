@@ -1,9 +1,13 @@
 
 use clap::Parser;
-use symphonium::{SymphoniumLoader, ResampleQuality};
 use input_pipeline::Pipeline;
+use burn::prelude::Tensor;
+use burn::prelude::TensorData;
+
+type Backend = burn::backend::NdArray;
 
 mod input_pipeline;
+mod hann;
 
 static MODEL_BYTES: &[u8] = include_bytes!("../model/model.bin");
 
@@ -24,13 +28,14 @@ fn main() {
     println!("LipSync");
     let args = Args::parse();
     dbg!(&args);
+    // Setup Burn backend
+    let device = Default::default();
     // Open input audio
     let mut sample = Pipeline::new(&args.input);
-    loop {
+    while !sample.done() {
         let swin = sample.next();
         println!("t={}", sample.position());
-        if sample.done() {
-            break;
-        }
+        let sz = swin.len();
+        let x = Tensor::<Backend, 1>::from_data(TensorData::new(swin, [sz]), &device);
     }
 }

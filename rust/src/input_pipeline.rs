@@ -1,6 +1,8 @@
 use symphonium::{SymphoniumLoader, DecodedAudio, ResampleQuality};
 use std::vec::Vec;
 
+use crate::hann::hann_window;
+
 const AUDIO_SAMPLERATE: u32 = 16000;
 const WINDOW_TIME: f32 = 25e-3;
 const HOP_TIME: f32 = 10e-3;
