@@ -3,6 +3,8 @@ use std::vec::Vec;
 use burn::prelude::Backend;
 use burn::prelude::Tensor;
 use burn::prelude::TensorData;
+use rustfft::{FftPlanner, Fft, num_complex::Complex};
+use std::sync::Arc;
 
 use crate::hann::hann_window;
 
@@ -16,6 +18,7 @@ pub struct Pipeline {
     buffer: Vec<f32>,
     sample: DecodedAudio,
     position: usize,
+    fft: Arc<dyn Fft<f32>>,
 }
 
 impl Pipeline {
@@ -28,7 +31,10 @@ impl Pipeline {
         b.resize(sample.frames(), 0.0);
         let num = sample.fill_channel(0, 0, &mut b);
         assert_eq!(num, Ok(sample.frames()));
-        Self { buffer: b, sample, position: 0 }
+        // Use FftPlanner to time implementations and record best for our size
+        let mut planner = FftPlanner::<f32>::new();
+        let fft = planner.plan_fft_forward(WINDOW_LENGTH);
+        Self { buffer: b, sample, position: 0, fft }
     }
 
     /// Get current window position (seconds)
@@ -67,6 +73,7 @@ impl Pipeline {
         let samples = self.next();
         let x = Tensor::<B, 1>::from_data(TensorData::new(samples, [WINDOW_LENGTH]), &device);
         let hann = Tensor::<B, 1>::from_data(TensorData::new(hann_window(WINDOW_LENGTH), [WINDOW_LENGTH]), &device);
+        //let fx = self.fft(x);
         x * hann
     }
 }
