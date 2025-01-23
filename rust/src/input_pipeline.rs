@@ -1,5 +1,8 @@
 use symphonium::{SymphoniumLoader, DecodedAudio, ResampleQuality};
 use std::vec::Vec;
+use burn::prelude::Backend;
+use burn::prelude::Tensor;
+use burn::prelude::TensorData;
 
 use crate::hann::hann_window;
 
@@ -48,10 +51,23 @@ impl Pipeline {
             for i in 0..WINDOW_LENGTH {
                 if let Some(elem) = self.buffer.get(self.position + i) {
                     v.push(*elem);
+                } else {
+                    v.push(0.0);
                 }
             }
             self.position += HOP_LENGTH;
             v
         }
+    }
+
+    /// Get next window of processed samples
+    pub fn processed<B: Backend>(&mut self) -> Tensor<B, 1> {
+        // Setup Burn backend
+        let device = Default::default();
+        let samples = self.next();
+        let x = Tensor::<B, 1>::from_data(TensorData::new(samples, [WINDOW_LENGTH]), &device);
+        let hann = Tensor::<B, 1>::from_data(TensorData::new(hann_window(WINDOW_LENGTH), [WINDOW_LENGTH]), &device);
+        //x
+        x * hann
     }
 }

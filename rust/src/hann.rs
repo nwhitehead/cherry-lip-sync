@@ -7,7 +7,8 @@ pub fn hann_window(length: usize) -> Vec<f32> {
     for i in 0..length {
         let x = (i as f32) / (length as f32);
         let phase = x * PI;
-        v.push(phase);
+        let sphase = phase.sin();
+        v.push(sphase * sphase);
     }
     v
 }

@@ -1,15 +1,14 @@
 
 use clap::Parser;
-use input_pipeline::Pipeline;
-use burn::prelude::Tensor;
-use burn::prelude::TensorData;
-
-type Backend = burn::backend::NdArray;
+use crate::input_pipeline::Pipeline;
+use crate::hann::hann_window;
 
 mod input_pipeline;
 mod hann;
 
 static MODEL_BYTES: &[u8] = include_bytes!("../model/model.bin");
+
+type Backend = burn::backend::NdArray;
 
 /// Analyze audio input and generate lip sync timing information output
 #[derive(Parser, Debug)]
@@ -28,14 +27,11 @@ fn main() {
     println!("LipSync");
     let args = Args::parse();
     dbg!(&args);
-    // Setup Burn backend
-    let device = Default::default();
     // Open input audio
     let mut sample = Pipeline::new(&args.input);
     while !sample.done() {
-        let swin = sample.next();
-        println!("t={}", sample.position());
-        let sz = swin.len();
-        let x = Tensor::<Backend, 1>::from_data(TensorData::new(swin, [sz]), &device);
+        let x = sample.processed::<Backend>();
+        println!("t={} sum={}", sample.position(), x.sum());
     }
+    dbg!(hann_window(5));
 }
