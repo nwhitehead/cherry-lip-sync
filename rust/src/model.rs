@@ -3,9 +3,6 @@ use burn::{
         gru::{Gru, GruConfig},
         BatchNorm, BatchNormConfig, Linear, LinearConfig,
     },
-    // nn::{
-    //     Dropout, DropoutConfig,
-    // }
     prelude::{Backend, Config, Module, Tensor},
 };
 
@@ -20,13 +17,15 @@ pub struct Model<B: Backend> {
 #[derive(Config, Debug)]
 pub struct ModelConfig {
     #[config(default = "26")]
-    input_size: usize,
+    pub input_size: usize,
     #[config(default = "80")]
-    hidden_size: usize,
+    pub hidden_size: usize,
     #[config(default = "12")]
-    num_classes: usize,
+    pub num_classes: usize,
     #[config(default = "0.2")]
-    dropout: f64,
+    pub dropout: f64,
+    #[config(default = "3")]
+    pub lookahead: usize,
 }
 
 impl ModelConfig {
