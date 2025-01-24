@@ -29,10 +29,7 @@ fn main() {
     dbg!(&args);
     // Open input audio
     let mut sample = Pipeline::<Backend>::new(&args.input);
-    while !sample.done() {
-        let t = sample.position();
-        let x = sample.processed();
-        //println!("t={}\n{}", t, x);
-    }
-    dbg!(hann_window(5));
+    // Process with model
+    let res = sample.batch_process();
+    println!("{}", res.slice([50..51, 0..26]));
 }
