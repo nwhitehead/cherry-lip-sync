@@ -42,7 +42,6 @@ impl<B: Backend> Pipeline<B> {
         let sample = loader
             .load(&filename, Some(AUDIO_SAMPLERATE), ResampleQuality::High, None)
             .expect("Should be able to load audio into memory");
-        println!("Input size is {}", sample.frames());
         let mut b = Vec::with_capacity(sample.frames());
         b.resize(sample.frames(), 0.0);
         let num = sample.fill_channel(0, 0, &mut b);

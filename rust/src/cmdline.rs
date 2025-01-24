@@ -34,10 +34,13 @@ struct Args {
     filter: bool,
 }
 
+fn viseme_to_str(data: i64) -> &'static str {
+    [ "D", "B", "I", "G", "H", "A", "X", "E", "K", "J", "C", "F"][data as usize]
+}
+
 fn main() {
     println!("LipSync");
     let args = Args::parse();
-    dbg!(&args);
     // Load model
     let device = Default::default();
     let recorder = BinBytesRecorder::<FullPrecisionSettings>::new();
@@ -52,19 +55,14 @@ fn main() {
     let mut sample = Pipeline::<Backend>::new(&args.input);
     // Process with model
     let mels = sample.batch_mel();
-    println!("{}", mels.clone().slice([100..101, 0..26]));
-    println!("{:?}", mels.clone().shape());
     let y = model.forward(mels.clone().unsqueeze());
     let predicted = y.clone().argmax(2).flatten::<1>(0, 2);
-    println!("{:?}", y.clone().shape());
-    println!("{:?}", predicted.clone().shape());
-    println!("{}", y.clone().slice([0..1, 100..101, 0..12]));
-    println!("{}", predicted);
     let visemes = predicted.into_data().into_vec::<i64>().expect("Able to convert tensor to vector");
     let frames = visemes.len() - config.lookahead;
     let sampled_frames = ((frames as f32) * HOP_TIME * args.fps).round() as usize;
     let mut last_viseme = -1;
     let mut dur = 2;
+    let mut previous_output_viseme = -1;
     for frame in 0..sampled_frames {
         let t = (frame as f32) / args.fps;
         let frame_original = (t / HOP_TIME).round() as usize + config.lookahead;
@@ -84,6 +82,9 @@ fn main() {
         } else {
             viseme
         };
-        println!("t={:.4} frame={} frame0={} --\t {}", t, frame, frame_original, actual_viseme);
+        if actual_viseme != previous_output_viseme {
+            println!("{:.3}\t{}", t, viseme_to_str(actual_viseme));
+        }
+        previous_output_viseme = actual_viseme;
     }
 }
