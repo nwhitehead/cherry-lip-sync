@@ -53,6 +53,7 @@ fn main() {
         .load_record(record);
     // Open input audio
     let mut sample = Pipeline::<Backend>::new(&args.input);
+    let mut outfile_data = Vec::<String>::new();
     // Process with model
     let mels = sample.batch_mel();
     let y = model.forward(mels.clone().unsqueeze());
@@ -83,8 +84,11 @@ fn main() {
             viseme
         };
         if actual_viseme != previous_output_viseme {
-            println!("{:.3}\t{}", t, viseme_to_str(actual_viseme));
+            let output_str = format!("{:.3}\t{}", t, viseme_to_str(actual_viseme));
+            println!("{}", output_str.clone());
+            outfile_data.push(output_str);
         }
         previous_output_viseme = actual_viseme;
     }
+    let _ = std::fs::write(args.output, outfile_data.join("\n"));
 }
