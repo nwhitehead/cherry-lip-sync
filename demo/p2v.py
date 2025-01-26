@@ -17,6 +17,8 @@ visemes = { 'X', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K' }
 p2v_map = {
     '_': ['X'],
     ',': ['X'],
+    # dash from text-to-speech, just ignore
+    '\u00a1': [],
 
     # Lip rounding vowel classes
     # "ah"
@@ -93,7 +95,8 @@ def to_visemes(phonemes):
         if ph in p2v_map:
             v = p2v_map[ph]
         else:
-            v = ['X']
+            # Keep mouth closed but not resting
+            v = ['A']
         visemes.extend(v)
         end_time = phonemes[i + 1][1]
         n = len(v)
