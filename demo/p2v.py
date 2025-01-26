@@ -46,8 +46,8 @@ p2v_map = {
     'Y': ['K'],
 
     # Alveolar fricatives
-    'S': ['J'],
-    'Z': ['J'],
+    'S': ['B'],
+    'Z': ['B'],
 
     # Alveolar
     'T': ['B'],
@@ -73,9 +73,9 @@ p2v_map = {
     'F': ['G'],
     'V': ['G'],
 
-    # Velar (could be new viseme shape?)
-    'NG': ['F'],
-    'K': ['F'],
+    # Velar (could be new viseme shape? split too?)
+    'NG': ['B'],
+    'K': ['B'],
     'G': ['F'],
     'W': ['F'],
 }
