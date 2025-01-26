@@ -1,0 +1,661 @@
+{
+    "text": "The field of text-to-speech has seen rapid development recently. I am an example of a virtual character with lip sync. How are my lips looking?",
+    "norm_text": "the field of text-to-speech has seen rapid development recently. i am an example of a virtual character with lip sync. how are my lips looking?",
+    "speaker_id": 4,
+    "sdp_ratio": 0.2,
+    "noise_scale": 0.6,
+    "noise_scale_w": 0.8,
+    "seed": 1234,
+    "speed": 1,
+    "samplerate": 44100,
+    "phonemes": [
+        {
+            "phoneme": "dh",
+            "tone": 0,
+            "time": 93,
+            "word": 0
+        },
+        {
+            "phoneme": "ah",
+            "tone": 1,
+            "time": 139,
+            "word": 0
+        },
+        {
+            "phoneme": "f",
+            "tone": 0,
+            "time": 232,
+            "word": 1
+        },
+        {
+            "phoneme": "iy",
+            "tone": 2,
+            "time": 325,
+            "word": 1
+        },
+        {
+            "phoneme": "l",
+            "tone": 0,
+            "time": 395,
+            "word": 1
+        },
+        {
+            "phoneme": "d",
+            "tone": 0,
+            "time": 464,
+            "word": 1
+        },
+        {
+            "phoneme": "ah",
+            "tone": 2,
+            "time": 522,
+            "word": 2
+        },
+        {
+            "phoneme": "V",
+            "tone": 0,
+            "time": 580,
+            "word": 2
+        },
+        {
+            "phoneme": "t",
+            "tone": 0,
+            "time": 650,
+            "word": 3
+        },
+        {
+            "phoneme": "eh",
+            "tone": 2,
+            "time": 766,
+            "word": 3
+        },
+        {
+            "phoneme": "k",
+            "tone": 0,
+            "time": 836,
+            "word": 3
+        },
+        {
+            "phoneme": "s",
+            "tone": 0,
+            "time": 882,
+            "word": 3
+        },
+        {
+            "phoneme": "t",
+            "tone": 0,
+            "time": 917,
+            "word": 3
+        },
+        {
+            "phoneme": "\u00a1",
+            "tone": 0,
+            "time": 952,
+            "word": 4
+        },
+        {
+            "phoneme": "t",
+            "tone": 0,
+            "time": 998,
+            "word": 5
+        },
+        {
+            "phoneme": "uw",
+            "tone": 2,
+            "time": 1057,
+            "word": 5
+        },
+        {
+            "phoneme": "\u00a1",
+            "tone": 0,
+            "time": 1091,
+            "word": 6
+        },
+        {
+            "phoneme": "s",
+            "tone": 0,
+            "time": 1149,
+            "word": 7
+        },
+        {
+            "phoneme": "p",
+            "tone": 0,
+            "time": 1231,
+            "word": 7
+        },
+        {
+            "phoneme": "iy",
+            "tone": 2,
+            "time": 1312,
+            "word": 7
+        },
+        {
+            "phoneme": "ch",
+            "tone": 0,
+            "time": 1382,
+            "word": 7
+        },
+        {
+            "phoneme": "hh",
+            "tone": 0,
+            "time": 1463,
+            "word": 8
+        },
+        {
+            "phoneme": "ae",
+            "tone": 2,
+            "time": 1498,
+            "word": 8
+        },
+        {
+            "phoneme": "z",
+            "tone": 0,
+            "time": 1567,
+            "word": 8
+        },
+        {
+            "phoneme": "s",
+            "tone": 0,
+            "time": 1625,
+            "word": 9
+        },
+        {
+            "phoneme": "iy",
+            "tone": 2,
+            "time": 1695,
+            "word": 9
+        },
+        {
+            "phoneme": "n",
+            "tone": 0,
+            "time": 1776,
+            "word": 9
+        },
+        {
+            "phoneme": "r",
+            "tone": 0,
+            "time": 1858,
+            "word": 10
+        },
+        {
+            "phoneme": "ae",
+            "tone": 2,
+            "time": 1939,
+            "word": 10
+        },
+        {
+            "phoneme": "p",
+            "tone": 0,
+            "time": 2043,
+            "word": 10
+        },
+        {
+            "phoneme": "ah",
+            "tone": 1,
+            "time": 2090,
+            "word": 10
+        },
+        {
+            "phoneme": "d",
+            "tone": 0,
+            "time": 2136,
+            "word": 10
+        },
+        {
+            "phoneme": "d",
+            "tone": 0,
+            "time": 2194,
+            "word": 11
+        },
+        {
+            "phoneme": "ih",
+            "tone": 1,
+            "time": 2264,
+            "word": 11
+        },
+        {
+            "phoneme": "V",
+            "tone": 0,
+            "time": 2322,
+            "word": 11
+        },
+        {
+            "phoneme": "eh",
+            "tone": 2,
+            "time": 2380,
+            "word": 11
+        },
+        {
+            "phoneme": "l",
+            "tone": 0,
+            "time": 2438,
+            "word": 11
+        },
+        {
+            "phoneme": "ah",
+            "tone": 1,
+            "time": 2519,
+            "word": 11
+        },
+        {
+            "phoneme": "p",
+            "tone": 0,
+            "time": 2577,
+            "word": 11
+        },
+        {
+            "phoneme": "m",
+            "tone": 0,
+            "time": 2647,
+            "word": 11
+        },
+        {
+            "phoneme": "ah",
+            "tone": 1,
+            "time": 2694,
+            "word": 11
+        },
+        {
+            "phoneme": "n",
+            "tone": 0,
+            "time": 2740,
+            "word": 11
+        },
+        {
+            "phoneme": "t",
+            "tone": 0,
+            "time": 2786,
+            "word": 11
+        },
+        {
+            "phoneme": "r",
+            "tone": 0,
+            "time": 2856,
+            "word": 12
+        },
+        {
+            "phoneme": "iy",
+            "tone": 2,
+            "time": 2914,
+            "word": 12
+        },
+        {
+            "phoneme": "s",
+            "tone": 0,
+            "time": 2984,
+            "word": 12
+        },
+        {
+            "phoneme": "ah",
+            "tone": 1,
+            "time": 3042,
+            "word": 12
+        },
+        {
+            "phoneme": "n",
+            "tone": 0,
+            "time": 3100,
+            "word": 12
+        },
+        {
+            "phoneme": "t",
+            "tone": 0,
+            "time": 3146,
+            "word": 12
+        },
+        {
+            "phoneme": "l",
+            "tone": 0,
+            "time": 3204,
+            "word": 12
+        },
+        {
+            "phoneme": "iy",
+            "tone": 1,
+            "time": 3309,
+            "word": 12
+        },
+        {
+            "phoneme": "-",
+            "tone": 0,
+            "time": 3425,
+            "word": 13
+        },
+        {
+            "phoneme": "ay",
+            "tone": 2,
+            "time": 3611,
+            "word": 14
+        },
+        {
+            "phoneme": "ae",
+            "tone": 2,
+            "time": 3727,
+            "word": 15
+        },
+        {
+            "phoneme": "m",
+            "tone": 0,
+            "time": 3808,
+            "word": 15
+        },
+        {
+            "phoneme": "ae",
+            "tone": 2,
+            "time": 3855,
+            "word": 16
+        },
+        {
+            "phoneme": "n",
+            "tone": 0,
+            "time": 3913,
+            "word": 16
+        },
+        {
+            "phoneme": "ih",
+            "tone": 1,
+            "time": 3959,
+            "word": 17
+        },
+        {
+            "phoneme": "g",
+            "tone": 0,
+            "time": 4017,
+            "word": 17
+        },
+        {
+            "phoneme": "z",
+            "tone": 0,
+            "time": 4075,
+            "word": 17
+        },
+        {
+            "phoneme": "ae",
+            "tone": 2,
+            "time": 4203,
+            "word": 17
+        },
+        {
+            "phoneme": "m",
+            "tone": 0,
+            "time": 4284,
+            "word": 17
+        },
+        {
+            "phoneme": "p",
+            "tone": 0,
+            "time": 4342,
+            "word": 17
+        },
+        {
+            "phoneme": "ah",
+            "tone": 1,
+            "time": 4400,
+            "word": 17
+        },
+        {
+            "phoneme": "l",
+            "tone": 0,
+            "time": 4458,
+            "word": 17
+        },
+        {
+            "phoneme": "ah",
+            "tone": 2,
+            "time": 4516,
+            "word": 18
+        },
+        {
+            "phoneme": "V",
+            "tone": 0,
+            "time": 4574,
+            "word": 18
+        },
+        {
+            "phoneme": "ah",
+            "tone": 1,
+            "time": 4621,
+            "word": 19
+        },
+        {
+            "phoneme": "V",
+            "tone": 0,
+            "time": 4690,
+            "word": 20
+        },
+        {
+            "phoneme": "er",
+            "tone": 2,
+            "time": 4795,
+            "word": 20
+        },
+        {
+            "phoneme": "ch",
+            "tone": 0,
+            "time": 4865,
+            "word": 20
+        },
+        {
+            "phoneme": "uw",
+            "tone": 1,
+            "time": 4969,
+            "word": 20
+        },
+        {
+            "phoneme": "ah",
+            "tone": 1,
+            "time": 5027,
+            "word": 20
+        },
+        {
+            "phoneme": "l",
+            "tone": 0,
+            "time": 5074,
+            "word": 20
+        },
+        {
+            "phoneme": "k",
+            "tone": 0,
+            "time": 5120,
+            "word": 21
+        },
+        {
+            "phoneme": "eh",
+            "tone": 2,
+            "time": 5224,
+            "word": 21
+        },
+        {
+            "phoneme": "r",
+            "tone": 0,
+            "time": 5306,
+            "word": 21
+        },
+        {
+            "phoneme": "ih",
+            "tone": 1,
+            "time": 5352,
+            "word": 21
+        },
+        {
+            "phoneme": "k",
+            "tone": 0,
+            "time": 5399,
+            "word": 21
+        },
+        {
+            "phoneme": "t",
+            "tone": 0,
+            "time": 5445,
+            "word": 21
+        },
+        {
+            "phoneme": "er",
+            "tone": 1,
+            "time": 5550,
+            "word": 21
+        },
+        {
+            "phoneme": "w",
+            "tone": 0,
+            "time": 5631,
+            "word": 22
+        },
+        {
+            "phoneme": "ih",
+            "tone": 2,
+            "time": 5677,
+            "word": 22
+        },
+        {
+            "phoneme": "dh",
+            "tone": 0,
+            "time": 5724,
+            "word": 22
+        },
+        {
+            "phoneme": "l",
+            "tone": 0,
+            "time": 5840,
+            "word": 23
+        },
+        {
+            "phoneme": "ih",
+            "tone": 2,
+            "time": 5898,
+            "word": 23
+        },
+        {
+            "phoneme": "p",
+            "tone": 0,
+            "time": 5968,
+            "word": 23
+        },
+        {
+            "phoneme": "s",
+            "tone": 0,
+            "time": 6037,
+            "word": 24
+        },
+        {
+            "phoneme": "ih",
+            "tone": 2,
+            "time": 6165,
+            "word": 24
+        },
+        {
+            "phoneme": "ng",
+            "tone": 0,
+            "time": 6246,
+            "word": 24
+        },
+        {
+            "phoneme": "k",
+            "tone": 0,
+            "time": 6327,
+            "word": 24
+        },
+        {
+            "phoneme": "-",
+            "tone": 0,
+            "time": 6455,
+            "word": 25
+        },
+        {
+            "phoneme": "hh",
+            "tone": 0,
+            "time": 6641,
+            "word": 26
+        },
+        {
+            "phoneme": "aw",
+            "tone": 2,
+            "time": 6757,
+            "word": 26
+        },
+        {
+            "phoneme": "aa",
+            "tone": 2,
+            "time": 6827,
+            "word": 27
+        },
+        {
+            "phoneme": "r",
+            "tone": 0,
+            "time": 6896,
+            "word": 27
+        },
+        {
+            "phoneme": "m",
+            "tone": 0,
+            "time": 6966,
+            "word": 28
+        },
+        {
+            "phoneme": "ay",
+            "tone": 2,
+            "time": 7047,
+            "word": 28
+        },
+        {
+            "phoneme": "l",
+            "tone": 0,
+            "time": 7163,
+            "word": 29
+        },
+        {
+            "phoneme": "ih",
+            "tone": 2,
+            "time": 7221,
+            "word": 29
+        },
+        {
+            "phoneme": "p",
+            "tone": 0,
+            "time": 7291,
+            "word": 29
+        },
+        {
+            "phoneme": "s",
+            "tone": 0,
+            "time": 7384,
+            "word": 29
+        },
+        {
+            "phoneme": "l",
+            "tone": 0,
+            "time": 7477,
+            "word": 30
+        },
+        {
+            "phoneme": "uh",
+            "tone": 2,
+            "time": 7535,
+            "word": 30
+        },
+        {
+            "phoneme": "k",
+            "tone": 0,
+            "time": 7593,
+            "word": 30
+        },
+        {
+            "phoneme": "ih",
+            "tone": 1,
+            "time": 7697,
+            "word": 30
+        },
+        {
+            "phoneme": "ng",
+            "tone": 0,
+            "time": 7825,
+            "word": 30
+        },
+        {
+            "phoneme": ",",
+            "tone": 0,
+            "time": 7918,
+            "word": 31
+        }
+    ]
+}
