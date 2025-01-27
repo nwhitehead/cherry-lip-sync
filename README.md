@@ -1,21 +1,21 @@
-# Peanut Lip Sync
+# Cherry Lip Sync
 
 ![Logo of lips](./images/Logo.png)
 
-Peanut Lip Sync allows you to create 2D mouth animations from voice recordings
+Cherry Lip Sync allows you to create 2D mouth animations from voice recordings
 or artificially generated voices. It analyzes your audio files, decides which
 mouth shapes are appropriate, then generates lip sync information. You can use
 it to animate characters for computer games, create animated content, or create
 talking avatars.
 
-Currently Peanut Lip Sync is a standalone tool but integrations are planned for
+Currently Cherry Lip Sync is a standalone tool but integrations are planned for
 other software applications.
 
 ## Demo Video
 
 ## Mouth Shapes
 
-Peanut Lip Sync uses 12 mouth shapes. The first 6 are the *basic mouth shapes*.
+Cherry Lip Sync uses 12 mouth shapes. The first 6 are the *basic mouth shapes*.
 The remaining 6 are the *extended mouth shapes*.
 
 | Label | Description | Alternative |
@@ -33,13 +33,28 @@ The remaining 6 are the *extended mouth shapes*.
 | K     | Rounded mouth with teeth closed for "R" sound. | E |
 | X     | Idle position. Resting mouth for silence. | A |
 
-Peanut Lip Sync will always output all the mouth shapes. If you don't have all
+Cherry Lip Sync will always output all the mouth shapes. If you don't have all
 the extended shapes available then you can copy from the basic shapes. The
 closest basic shape is given in the table above under "Alternative".
 
-## Formats
-
-
-
 ## Command Line Options
 
+
+
+## Input Format
+
+Input audio can be in `.mp3`, `.ogg`, `.wav`, and `.flac` formats. Internally
+all audio is converted to 32-bit mono at 16 kHz for analysis. If you are having
+trouble getting things working or experience audio timing issues you can
+manually convert your audio to 16 kHz mono in `.wav` format to rule out any
+problems with the input conversion.
+
+The lip sync model used by Cherry Lip Sync is currently solely trained on
+English language audio so will probably give the best results with English
+language input. Other languages that share phonemes with English will probably
+give better results than languages with fewer similarities to English.
+
+Input audio should be as clean as possible. Extraneous noises may be interpreted
+as vocal sounds requiring lip movements.
+
+## Output Format

@@ -147,34 +147,22 @@ fn main() {
         .init::<Backend>(&device)
         .load_record(record);
 
-    // Save model in MessagePack format with full precision
+    // Save model in binary format with full precision
     let recorder = BinFileRecorder::<FullPrecisionSettings>::new();
     model
         .clone()
-        .save_file("../data/model", &recorder)
-        .expect("Should be able to save the model");
-    // Save in bin format
-    let recorder = BinFileRecorder::<HalfPrecisionSettings>::new();
-    model
-        .clone()
-        .save_file("../data/model-half", &recorder)
-        .expect("Should be able to save the model");
-    // Now save in half precision
-    let recorder = NamedMpkFileRecorder::<HalfPrecisionSettings>::new();
-    model
-        .clone()
-        .save_file("../data/model-half", &recorder)
+        .save_file("../model/model", &recorder)
         .expect("Should be able to save the model");
     println!("Model converted from PyTorch to Rust binary format");
 
     // Now convert melbank for audio input processing
-    let x = load_tensor::<Backend, 2>("../data/melbank.pt");
-    save_tensor(x, "../data/melbank");
+    let x = load_tensor::<Backend, 2>("../model/melbank.pt");
+    save_tensor(x, "../model/melbank");
     
     // Now convert test input/output
-    let x = load_tensor::<Backend, 3>("../data/test_in.pt");
-    save_tensor(x, "../data/test_in");
-    let out = load_tensor::<Backend, 3>("../data/test_out.pt");
-    save_tensor(out, "../data/test_out");
+    let x = load_tensor::<Backend, 3>("../model/test_in.pt");
+    save_tensor(x, "../model/test_in");
+    let out = load_tensor::<Backend, 3>("../model/test_out.pt");
+    save_tensor(out, "../model/test_out");
     println!("Test tensors converted from PyTorch to Rust binary format");
 }
