@@ -13,7 +13,9 @@ other software applications.
 
 ## Demo Video
 
-<video controls width="500" src="./demo/Demo.mp4" alt="Demonstration video showing talking lips to public domain audio clips"></video>
+<!-- <video controls width="500" src="./demo/Demo.mp4" alt="Demonstration video showing talking lips to public domain audio clips"></video> -->
+
+![Demonstration video showing talking lips to public domain audio clips](./demo/Demo.mp4)
 
 The above video demonstrates lip sync output driving mouth pictures using public
 domain audio clips with no text provided. Animation sequences were directly from
@@ -35,7 +37,7 @@ The remaining 6 are the *extended mouth shapes*.
 | G     | Bottom lip touching upper teeth. For "F" and "V" sounds. | B |
 | H     | Tongue touching upper teeth. For "L" sound. | C |
 | I     | Wide mouth showing teeth for "EE" sound. | B |
-| J     | Shape for "S", "CH", "J", "SH", "Z". | B |
+| J     | Shape for "CH", "J", "SH". | B |
 | K     | Rounded mouth with teeth closed for "R" sound. | E |
 | X     | Idle position. Resting mouth for silence. | A |
 
