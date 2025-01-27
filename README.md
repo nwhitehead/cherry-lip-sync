@@ -67,4 +67,12 @@ as vocal sounds requiring lip movements.
 
 ## Comparison with Rhubarb
 
-<video controls width="500" src="./demo/Compare.mp4" alt="Demonstration video showing Rhubarb with and without text provided versus Cherry"></video>
+https://github.com/user-attachments/assets/5490cbff-9e34-4464-ad8a-f21fbf633341
+
+The above video shows Rhubarb output for a challenging synthetic voice. On the left
+is the results without providing any text. On the right is the Rhubarb result with
+source text provided.
+
+Next Rhubarb is shown against Cherry. In this comparison Rhubarb has source text
+provided but Cherry just uses audio.
+
