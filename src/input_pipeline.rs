@@ -56,16 +56,6 @@ impl<B: Backend> Pipeline<B> {
         Self { buffer: b, position: 0, fft, hann, melbanks, device }
     }
 
-    /// Get current window position (seconds)
-    pub fn position(&self) -> f32 {
-        (self.position as f32) / (AUDIO_SAMPLERATE as f32)
-    }
-
-    /// Determine if we are done reading samples
-    pub fn done(&self) -> bool {
-        self.position >= self.buffer.len()
-    }
-
     /// Get next window of samples
     pub fn next(&mut self) -> Vec<f32> {
         if let Some(slice) = self.buffer.get(self.position..self.position + WINDOW_LENGTH) {
