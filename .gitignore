@@ -5,3 +5,6 @@ data/
 wandb/
 checkpoints/
 out/
+datasets/
+images/private/
+demo/private/
