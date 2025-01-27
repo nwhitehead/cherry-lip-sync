@@ -13,6 +13,12 @@ other software applications.
 
 ## Demo Video
 
+<video controls width="500" src="./demo/Demo.mp4" alt="Demonstration video showing talking lips to public domain audio clips"></video>
+
+The above video demonstrates lip sync output driving mouth pictures using public
+domain audio clips with no text provided. Animation sequences were directly from
+Cherry Lip Sync without additional editing.
+
 ## Mouth Shapes
 
 Cherry Lip Sync uses 12 mouth shapes. The first 6 are the *basic mouth shapes*.
@@ -58,3 +64,7 @@ Input audio should be as clean as possible. Extraneous noises may be interpreted
 as vocal sounds requiring lip movements.
 
 ## Output Format
+
+## Comparison with Rhubarb
+
+<video controls width="500" src="./demo/Compare.mp4" alt="Demonstration video showing Rhubarb with and without text provided versus Cherry"></video>
