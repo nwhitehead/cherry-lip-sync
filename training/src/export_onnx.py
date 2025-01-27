@@ -18,7 +18,7 @@ max_time = 10
 
 model = NeuralNet(input_size, hidden_size, layers, num_classes)
 
-d = torch.load('./rust_inference/model/model.pt', weights_only=True, map_location=torch.device('cpu'))
+d = torch.load('../model/model.pt', weights_only=True, map_location=torch.device('cpu'))
 model.load_state_dict(d)
 model.eval()
 
