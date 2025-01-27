@@ -13,9 +13,7 @@ other software applications.
 
 ## Demo Video
 
-<!-- <video controls width="500" src="./demo/Demo.mp4" alt="Demonstration video showing talking lips to public domain audio clips"></video> -->
-
-https://./demo/Demo.mp4
+https://github.com/user-attachments/assets/91ebfb48-fa81-4629-bf22-038d78d29a29
 
 The above video demonstrates lip sync output driving mouth pictures using public
 domain audio clips with no text provided. Animation sequences were directly from
