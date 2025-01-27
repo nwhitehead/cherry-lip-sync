@@ -65,14 +65,22 @@ as vocal sounds requiring lip movements.
 
 ## Output Format
 
+The output format is tab-separated values format (TSV). Each line contains a
+time as a floating point number measured in seconds since the start of the audio
+clip, followed by a `TAB` character, then a single letter indicating the viseme
+for that time. The letter is from the set `ABCDEFGHIJKX`. The fist viseme
+at time `0` may or may not be `X`. The final viseme on the last line will always
+be `X`.
+
 ## Comparison with Rhubarb
 
 https://github.com/user-attachments/assets/5490cbff-9e34-4464-ad8a-f21fbf633341
 
-The above video shows Rhubarb output for a challenging synthetic voice. On the left
-is the results without providing any text. On the right is the Rhubarb result with
-source text provided.
+The above video shows Rhubarb output for a challenging synthetic voice. On the
+left is the result without providing any text. On the right is the Rhubarb
+result with source text provided.
 
 Next Rhubarb is shown against Cherry. In this comparison Rhubarb has source text
-provided but Cherry just uses audio.
-
+provided but Cherry just uses audio. Rhubarb struggles to get enough viseme
+changes to make the animation look convincing. Cherry picks more visemes but is
+perhaps too "chattery".
