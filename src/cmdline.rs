@@ -99,7 +99,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
 
-    const expected: &'static str = "0.000\tX
+    const EXPECTED: &'static str = "0.000\tX
 0.833\tE
 1.167\tA
 1.267\tB
@@ -111,14 +111,34 @@ mod tests {
 1.800\tX
 ";
 
+    const EXPECTED_5_FPS: &'static str = "0.000\tX
+1.000\tE
+1.200\tA
+1.400\tC
+1.600\tF
+1.800\tX
+";
+
+    const EXPECTED_50_FPS: &'static str = "0.000\tX
+0.840\tE
+1.140\tA
+1.260\tB
+1.280\tJ
+1.400\tC
+1.420\tK
+1.540\tF
+1.620\tA
+1.800\tX
+";
+
     #[test]
     fn test_basic_operation_ogg() {
         let output = test_bin::get_test_bin("cherrylipsync")
             .args(["-i", "./testing/hello.ogg", "-o", "-"])
             .output()
-            .expect("Failed to start my_binary");
+            .expect("Failed to start cherrylipsync");
 
-        assert_eq!(String::from_utf8_lossy(&output.stdout), expected);
+        assert_eq!(String::from_utf8_lossy(&output.stdout), EXPECTED);
     }
 
     #[test]
@@ -126,8 +146,28 @@ mod tests {
         let output = test_bin::get_test_bin("cherrylipsync")
             .args(["-i", "./testing/hello.wav", "-o", "-"])
             .output()
-            .expect("Failed to start my_binary");
+            .expect("Failed to start cherrylipsync");
 
-        assert_eq!(String::from_utf8_lossy(&output.stdout), expected);
+        assert_eq!(String::from_utf8_lossy(&output.stdout), EXPECTED);
+    }
+
+    #[test]
+    fn test_low_fps() {
+        let output = test_bin::get_test_bin("cherrylipsync")
+            .args(["-i", "./testing/hello.wav", "--fps", "5", "-o", "-"])
+            .output()
+            .expect("Failed to start cherrylipsync");
+
+        assert_eq!(String::from_utf8_lossy(&output.stdout), EXPECTED_5_FPS);
+    }
+
+    #[test]
+    fn test_high_fps() {
+        let output = test_bin::get_test_bin("cherrylipsync")
+            .args(["-i", "./testing/hello.wav", "--fps", "50", "-o", "-"])
+            .output()
+            .expect("Failed to start cherrylipsync");
+
+        assert_eq!(String::from_utf8_lossy(&output.stdout), EXPECTED_50_FPS);
     }
 }
