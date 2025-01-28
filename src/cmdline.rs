@@ -8,7 +8,7 @@ mod hann;
 mod input_pipeline;
 mod model;
 
-static MODEL_BYTES: &[u8] = include_bytes!("../model/model.bin");
+static MODEL_BYTES: &[u8] = include_bytes!("../model/model.bi");
 
 type Backend = burn::backend::NdArray;
 
