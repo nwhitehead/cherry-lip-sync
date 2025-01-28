@@ -22,9 +22,9 @@ static MELBANK_BYTES: &[u8] = include_bytes!("../model/melbank.bin");
 
 fn load_tensor<B: Backend, const D: usize>(data: Vec<u8>) -> Tensor<B, D> {
     let recorder = BinBytesRecorder::<FullPrecisionSettings>::new();
-    return recorder
+    recorder
         .load(data, &Default::default())
-        .expect("Load tensor");
+        .expect("Load tensor")
 }
 
 pub struct Pipeline<B: Backend> {
@@ -41,7 +41,7 @@ impl<B: Backend> Pipeline<B> {
         let mut loader = SymphoniumLoader::new();
         let sample = loader
             .load(
-                &filename,
+                filename,
                 Some(AUDIO_SAMPLERATE),
                 ResampleQuality::High,
                 None,
@@ -115,14 +115,13 @@ impl<B: Backend> Pipeline<B> {
             .expect("Should be able to compute FFT");
         // Buffer now contains actual FFT results
         let power = output_buffer.iter().map(Complex::norm_sqr).collect();
-        let pwr = Tensor::<B, 2>::from_data(TensorData::new(power, [1, FFT_LENGTH]), &self.device);
-        pwr
+        Tensor::<B, 2>::from_data(TensorData::new(power, [1, FFT_LENGTH]), &self.device)
     }
 
     /// Batch process
     pub fn batch_mel(&mut self) -> Tensor<B, 2> {
         // Compute output frames
-        let sz = (self.buffer.len() - (WINDOW_LENGTH - 1) + (HOP_LENGTH - 1)) / HOP_LENGTH;
+        let sz = (self.buffer.len() - (WINDOW_LENGTH - 1)).div_ceil(HOP_LENGTH);
         let mut pwr = Tensor::<B, 2>::zeros([sz, FFT_LENGTH], &self.device);
         for i in 0..sz {
             let r = self.next_power();

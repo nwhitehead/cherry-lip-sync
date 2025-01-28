@@ -17,7 +17,7 @@ fn load_tensor<B: Backend, const D: usize>(path: &str) -> Tensor<B, D> {
     let trecord: FloatTensorRecord<B, D> = PyTorchFileRecorder::<FullPrecisionSettings>::new()
         .load(path.into(), &Default::default())
         .expect("Load tensor");
-    return trecord.test.val();
+    trecord.test.val()
 }
 
 fn save_tensor<B: Backend, const D: usize>(x: Tensor<B, D>, path: &str) {

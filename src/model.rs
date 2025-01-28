@@ -51,8 +51,7 @@ impl<B: Backend> Model<B> {
         let x = self.bnorm.forward(x.permute([0, 2, 1])).permute([0, 2, 1]);
         let x = self.gru1.forward(x, None);
         let x = self.gru2.forward(x, None);
-        let x = self.proj.forward(x);
-        x
+        self.proj.forward(x)
     }
 }
 
