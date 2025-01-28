@@ -41,6 +41,7 @@ Some of the notable things NOT present:
 
 ## Visualization
 
+![model_simple onnx](https://github.com/user-attachments/assets/a2b4a1fe-fef4-45c6-9a6a-7864a85a07de)
 
 
 ## Training Data
