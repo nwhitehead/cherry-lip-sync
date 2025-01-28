@@ -39,7 +39,7 @@ fn viseme_to_str(data: i64) -> &'static str {
 }
 
 fn main() {
-    println!("LipSync");
+    println!("CherryLipSync");
     let args = Args::parse();
     // Load model
     let device = Default::default();

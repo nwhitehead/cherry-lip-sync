@@ -15,9 +15,9 @@ other software applications.
 
 https://github.com/user-attachments/assets/91ebfb48-fa81-4629-bf22-038d78d29a29
 
-The above video demonstrates lip sync output driving mouth pictures using public
-domain audio clips with no text provided. Animation sequences were directly from
-Cherry Lip Sync without additional editing.
+The above video demonstrates lip sync output driving mouth pictures using
+Creative Commons licensed audio clips with no text provided. Animation sequences
+were directly from Cherry Lip Sync without additional editing.
 
 ## Mouth Shapes
 
@@ -45,7 +45,20 @@ closest basic shape is given in the table above under "Alternative".
 
 ## Command Line Options
 
+The command line tool is very basic. Options are:
 
+    CherryLipSync
+    Analyze audio input and generate lip sync timing information output
+
+    Usage: lipsync [OPTIONS] --input <INPUT> --output <OUTPUT>
+
+    Options:
+    -i, --input <INPUT>    Path to input audio
+    -o, --output <OUTPUT>  Path to output file to generate
+    -f, --fps <FPS>        Desired FPS of output frames [default: 30]
+        --filter           Filter single frame output frames
+    -h, --help             Print help
+    -V, --version          Print version
 
 ## Input Format
 
@@ -71,6 +84,20 @@ clip, followed by a `TAB` character, then a single letter indicating the viseme
 for that time. The letter is from the set `ABCDEFGHIJKX`. The fist viseme
 at time `0` may or may not be `X`. The final viseme on the last line will always
 be `X`.
+
+Example:
+
+    0.000   X
+    0.133   C
+    0.200   G
+    0.300   I
+    0.367   K
+    0.400   E
+    0.500   C
+    0.567   A
+    0.600   B
+    0.633   X
+
 
 ## Comparison with Rhubarb
 

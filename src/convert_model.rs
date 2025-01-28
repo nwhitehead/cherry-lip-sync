@@ -4,7 +4,7 @@ use burn::module::Param;
 use burn::prelude::Backend;
 use burn::prelude::Tensor;
 use burn::record::{
-    BinFileRecorder, FullPrecisionSettings, HalfPrecisionSettings, NamedMpkFileRecorder, Recorder,
+    BinFileRecorder, FullPrecisionSettings, Recorder,
 };
 use burn_import::pytorch::{LoadArgs, PyTorchFileRecorder};
 

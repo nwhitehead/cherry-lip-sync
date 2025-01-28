@@ -29,8 +29,8 @@ data is available.
 
 The output is available at 100 Hz (because of the window spacing). The command
 line tool performs inference and then samples the model outputs at the final
-desired framerate. The command line interface has an optional filtering step
-that can prevent single frame visemes.
+desired framerate (30fps by default). The command line interface has an optional
+filtering step that can prevent single frame visemes (disabled by default).
 
 Some of the notable things NOT present:
 1) There is no Mel spectrum normalization beyond batch norm
@@ -46,17 +46,33 @@ Some of the notable things NOT present:
 
 ## Training Data
 
-The training set is a proprietary lip sync dataset generated from public domain
-audio. The main idea was to use manually annotated data sources with the same
-sentence said by many people. One manual lip sync sequence then can be used many
-times for training with a variety of audio frames. Another idea was to warp
-existing audio and lip sync timing data by time stretching and pitch correction.
-Finally synthetic audio could be generated with precisely known phoneme timing
-and mapped to plausible visemes, then manually reviewed quickly (e.g. 1 hour of
-review to generate 10 minutes of usable training data).
+The training set is a proprietary lip sync dataset generated using audio
+from LibriSpeech[^2]. The lip sync timing information was generated using
+a variety of methods:
 
-The current training dataset contains about 1 hour of audio and takes about 5
-minutes to fully train with 200 epochs on an NVIDIA GTX 3090.
+1) Manual annotation
+2) Time warping existing visemes from a word to other instances of the same word
+3) Time warping existing training examples to generate new examples
+4) Synthetic TTS generation with known phoneme timings and rules for visemes
+5) Apply voice changing to existing audio examples without changing timing
+
+The synthetic examples were generated using
+[MeloTTS](https://github.com/myshell-ai/MeloTTS) with modifications to output
+phoneme timing information. The phonemes are mapped to plausible visemes using
+an ad-hoc (and evolving) set of programmatic rules with some element of random
+choices. These were generated in bulk then manually reviewed quickly (e.g. 1
+hour of review to generate 5 minutes of usable training data). The rules are
+inspired from code in [Rhubarb](https://github.com/DanielSWolf/rhubarb-lip-sync)
+and [LazyKH](https://github.com/carykh/lazykh/).
+
+Synthetic voice changing is used to change voices without altering timing of
+phonemes to extend the training set. This lets each high-quality lip sync
+example in the training set be extended to multiple speaking voices. I used
+[RVC](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) for
+voice changing.
+
+The current training dataset contains about 1 hour of English language audio and
+takes about 5 minutes to fully train with 200 epochs on an NVIDIA GTX 3090.
 
 ## Python
 
@@ -76,3 +92,5 @@ to avoid needing any configuration files or setup.
 
 
 [^1]: D. Aneja, W. Li. _Real-Time Lip Sync for Live 2D Animation_. https://arxiv.org/abs/1910.08685
+
+[^2]: V. Panayotov, G. Chen, D. Povey and S. Khudanpur, _Librispeech: An ASR corpus based on public domain audio books_, 2015 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), South Brisbane, QLD, Australia, 2015, pp. 5206-5210, doi: 10.1109/ICASSP.2015.7178964.
