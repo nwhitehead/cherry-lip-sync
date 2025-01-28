@@ -2,11 +2,23 @@
 name = "cherrylipsync"
 version = "0.1.0"
 edition = "2021"
-license = "MIT"
+license = "MIT OR Apache-2.0"
+authors = ["Nathan Whitehead <nwhitehe@gmail.com>"]
+description = """
+Cherry Lip Sync allows you to create 2D mouth animations from voice recordings
+or artificially generated voices.
+"""
+homepage = "https://github.com/nwhitehead/lipsync"
+repository = "https://github.com/nwhitehead/lipsync"
+documentation = "https://github.com/nwhitehead/lipsync"
+keywords = [ "lipsync", "audio", "animation", "gamedev", "speech" ]
+categories = [ "command-line-utilities" ]
+autotests = false
+default-run = "cherrylipsync"
 
 [dependencies]
-burn = { git = "https://github.com/tracel-ai/burn.git", features = ["ndarray"] }
-burn-import = { git = "https://github.com/tracel-ai/burn.git" }
+burn = { git = "https://github.com/tracel-ai/burn.git", features = ["ndarray"], rev = "29c383b8" }
+burn-import = { git = "https://github.com/tracel-ai/burn.git", rev = "29c383b8" }
 clap = { version = "4.5.27", features = ["derive"] }
 realfft = "3.4.0"
 rustfft = "6.2.0"
