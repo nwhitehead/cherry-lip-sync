@@ -75,11 +75,10 @@ mod tests {
 
     #[test]
     fn test_output() {
-
         static MODEL_BYTES: &[u8] = include_bytes!("../model/model.bin");
         static TENSOR_IN_BYTES: &[u8] = include_bytes!("../model/test_in.bin");
         static TENSOR_OUT_BYTES: &[u8] = include_bytes!("../model/test_out.bin");
-    
+
         type MyBackend = burn::backend::NdArray;
         let device = Default::default();
 

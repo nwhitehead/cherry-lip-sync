@@ -1,12 +1,12 @@
-use symphonium::{SymphoniumLoader, ResampleQuality};
-use std::vec::Vec;
 use burn::prelude::Backend;
 use burn::prelude::Tensor;
 use burn::prelude::TensorData;
 use burn::record::{BinBytesRecorder, FullPrecisionSettings, Recorder};
+use realfft::{RealFftPlanner, RealToComplex};
 use rustfft::num_complex::Complex;
 use std::sync::Arc;
-use realfft::{RealFftPlanner, RealToComplex};
+use std::vec::Vec;
+use symphonium::{ResampleQuality, SymphoniumLoader};
 
 use crate::hann::hann_window;
 
@@ -31,8 +31,8 @@ pub struct Pipeline<B: Backend> {
     buffer: Vec<f32>,
     position: usize,
     fft: Arc<dyn RealToComplex<f32>>,
-    hann: Tensor::<B, 1>,
-    melbanks: Tensor::<B, 2>,
+    hann: Tensor<B, 1>,
+    melbanks: Tensor<B, 2>,
     device: B::Device,
 }
 
@@ -40,7 +40,12 @@ impl<B: Backend> Pipeline<B> {
     pub fn new(filename: &String) -> Self {
         let mut loader = SymphoniumLoader::new();
         let sample = loader
-            .load(&filename, Some(AUDIO_SAMPLERATE), ResampleQuality::High, None)
+            .load(
+                &filename,
+                Some(AUDIO_SAMPLERATE),
+                ResampleQuality::High,
+                None,
+            )
             .expect("Should be able to load audio into memory");
         let mut b = Vec::with_capacity(sample.frames());
         b.resize(sample.frames(), 0.0);
@@ -51,14 +56,27 @@ impl<B: Backend> Pipeline<B> {
         let fft = planner.plan_fft_forward(WINDOW_LENGTH);
         // Setup tensors so we don't have to recompute them every frame
         let device = Default::default();
-        let hann = Tensor::<B, 1>::from_data(TensorData::new(hann_window(WINDOW_LENGTH), [WINDOW_LENGTH]), &device);
+        let hann = Tensor::<B, 1>::from_data(
+            TensorData::new(hann_window(WINDOW_LENGTH), [WINDOW_LENGTH]),
+            &device,
+        );
         let melbanks = load_tensor::<B, 2>(MELBANK_BYTES.to_vec());
-        Self { buffer: b, position: 0, fft, hann, melbanks, device }
+        Self {
+            buffer: b,
+            position: 0,
+            fft,
+            hann,
+            melbanks,
+            device,
+        }
     }
 
     /// Get next window of samples
     pub fn next(&mut self) -> Vec<f32> {
-        if let Some(slice) = self.buffer.get(self.position..self.position + WINDOW_LENGTH) {
+        if let Some(slice) = self
+            .buffer
+            .get(self.position..self.position + WINDOW_LENGTH)
+        {
             self.position += HOP_LENGTH;
             Vec::from(slice)
         } else {
@@ -81,12 +99,20 @@ impl<B: Backend> Pipeline<B> {
         let x = Tensor::<B, 1>::from_data(TensorData::new(samples, [WINDOW_LENGTH]), &self.device);
         let hann_x = x * self.hann.clone();
         let mut input_buffer = vec![0.0f32; WINDOW_LENGTH];
-        let mut output_buffer = vec![Complex{ re: 0.0f32, im: 0.0f32 }; FFT_LENGTH];
+        let mut output_buffer = vec![
+            Complex {
+                re: 0.0f32,
+                im: 0.0f32
+            };
+            FFT_LENGTH
+        ];
         // Fill real part of buffer with hann_x data
         for p in hann_x.clone().to_data().iter().enumerate() {
             input_buffer[p.0] = p.1;
         }
-        self.fft.process(&mut input_buffer, &mut output_buffer).expect("Should be able to compute FFT");
+        self.fft
+            .process(&mut input_buffer, &mut output_buffer)
+            .expect("Should be able to compute FFT");
         // Buffer now contains actual FFT results
         let power = output_buffer.iter().map(Complex::norm_sqr).collect();
         let pwr = Tensor::<B, 2>::from_data(TensorData::new(power, [1, FFT_LENGTH]), &self.device);
@@ -109,10 +135,16 @@ impl<B: Backend> Pipeline<B> {
         // Now do derivatives
         let der = pwr.clone().pad((0, 0, 2, 1), 0.0);
         let d_off0 = der.clone().slice([0..sz, 0..MELS]);
-        let d_off1 = der.clone().slice([1..sz+1, 0..MELS]);
+        let d_off1 = der.clone().slice([1..sz + 1, 0..MELS]);
         let d_off2 = pwr.clone();
-        let d_off3 = der.clone().slice([3..sz+3, 0..MELS]);
+        let d_off3 = der.clone().slice([3..sz + 3, 0..MELS]);
         // Concatenate powers and smeared derivatives
-        Tensor::cat(vec![pwr, d_off2 * 0.5 + d_off3 * 0.5 - d_off0 * 0.5 - d_off1 * 0.5], 1)
+        Tensor::cat(
+            vec![
+                pwr,
+                d_off2 * 0.5 + d_off3 * 0.5 - d_off0 * 0.5 - d_off1 * 0.5,
+            ],
+            1,
+        )
     }
 }

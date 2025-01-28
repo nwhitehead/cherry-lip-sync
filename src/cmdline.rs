@@ -1,12 +1,11 @@
-
+use crate::input_pipeline::{Pipeline, HOP_TIME};
+use crate::model::ModelConfig;
 use burn::module::Module;
 use burn::record::{BinBytesRecorder, FullPrecisionSettings, Recorder};
 use clap::Parser;
-use crate::input_pipeline::{Pipeline, HOP_TIME};
-use crate::model::ModelConfig;
 
-mod input_pipeline;
 mod hann;
+mod input_pipeline;
 mod model;
 
 static MODEL_BYTES: &[u8] = include_bytes!("../model/model.bin");
@@ -35,12 +34,16 @@ struct Args {
 }
 
 fn viseme_to_str(data: i64) -> &'static str {
-    [ "D", "B", "I", "G", "H", "A", "X", "E", "K", "J", "C", "F"][data as usize]
+    ["D", "B", "I", "G", "H", "A", "X", "E", "K", "J", "C", "F"][data as usize]
 }
 
 fn main() {
-    println!("CherryLipSync");
     let args = Args::parse();
+    let writing_stdout = args.output == "-";
+    // Say hello if we are not writing output to stdout
+    if !writing_stdout {
+        println!("CherryLipSync");
+    }
     // Load model
     let device = Default::default();
     let recorder = BinBytesRecorder::<FullPrecisionSettings>::new();
@@ -48,9 +51,7 @@ fn main() {
         .load(MODEL_BYTES.to_vec(), &device)
         .expect("Should decode state successfully");
     let config = ModelConfig::new();
-    let model = config
-        .init::<Backend>(&device)
-        .load_record(record);
+    let model = config.init::<Backend>(&device).load_record(record);
     // Open input audio
     let mut sample = Pipeline::<Backend>::new(&args.input);
     let mut outfile_data = Vec::<String>::new();
@@ -58,7 +59,10 @@ fn main() {
     let mels = sample.batch_mel();
     let y = model.forward(mels.clone().unsqueeze());
     let predicted = y.clone().argmax(2).flatten::<1>(0, 2);
-    let visemes = predicted.into_data().into_vec::<i64>().expect("Able to convert tensor to vector");
+    let visemes = predicted
+        .into_data()
+        .into_vec::<i64>()
+        .expect("Able to convert tensor to vector");
     let frames = visemes.len() - config.lookahead;
     let sampled_frames = ((frames as f32) * HOP_TIME * args.fps).round() as usize;
     let mut last_viseme = -1;
@@ -78,17 +82,52 @@ fn main() {
         } else {
             dur += 1;
         }
-        let actual_viseme = if args.filter {
-            last_viseme
-        } else {
-            viseme
-        };
+        let actual_viseme = if args.filter { last_viseme } else { viseme };
         if actual_viseme != previous_output_viseme {
             let output_str = format!("{:.3}\t{}", t, viseme_to_str(actual_viseme));
-            println!("{}", output_str.clone());
             outfile_data.push(output_str);
         }
         previous_output_viseme = actual_viseme;
     }
-    let _ = std::fs::write(args.output, outfile_data.join("\n"));
+    if !writing_stdout {
+        let _ = std::fs::write(args.output, outfile_data.join("\n") + "\n");
+    } else {
+        println!("{}", outfile_data.join("\n"));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    const expected: &'static str = "0.000\tX
+0.833\tE
+1.167\tA
+1.267\tB
+1.300\tJ
+1.400\tC
+1.433\tK
+1.567\tF
+1.633\tA
+1.800\tX
+";
+
+    #[test]
+    fn test_basic_operation_ogg() {
+        let output = test_bin::get_test_bin("cherrylipsync")
+            .args(["-i", "./testing/hello.ogg", "-o", "-"])
+            .output()
+            .expect("Failed to start my_binary");
+
+        assert_eq!(String::from_utf8_lossy(&output.stdout), expected);
+    }
+
+    #[test]
+    fn test_basic_operation_wav() {
+        let output = test_bin::get_test_bin("cherrylipsync")
+            .args(["-i", "./testing/hello.wav", "-o", "-"])
+            .output()
+            .expect("Failed to start my_binary");
+
+        assert_eq!(String::from_utf8_lossy(&output.stdout), expected);
+    }
 }

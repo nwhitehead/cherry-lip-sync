@@ -3,9 +3,7 @@ use burn::module::Module;
 use burn::module::Param;
 use burn::prelude::Backend;
 use burn::prelude::Tensor;
-use burn::record::{
-    BinFileRecorder, FullPrecisionSettings, Recorder,
-};
+use burn::record::{BinFileRecorder, FullPrecisionSettings, Recorder};
 use burn_import::pytorch::{LoadArgs, PyTorchFileRecorder};
 
 mod model;
@@ -36,10 +34,7 @@ fn main() {
     // We need to remap the GRU weights because PyTorch saves them as concatenated matrices and
     // we have manually split them up into r/z/n.
     let args = LoadArgs::new("./model/model.ptx".into())
-        .with_key_remap(
-            "(net\\.1\\.)(.+)",
-            "bnorm.$2",
-        )
+        .with_key_remap("(net\\.1\\.)(.+)", "bnorm.$2")
         .with_key_remap(
             "net\\.4\\.weight_ih_l0.r",
             "gru1.reset_gate.input_transform.weight",
@@ -158,7 +153,7 @@ fn main() {
     // Now convert melbank for audio input processing
     let x = load_tensor::<Backend, 2>("../model/melbank.pt");
     save_tensor(x, "../model/melbank");
-    
+
     // Now convert test input/output
     let x = load_tensor::<Backend, 3>("../model/test_in.pt");
     save_tensor(x, "../model/test_in");

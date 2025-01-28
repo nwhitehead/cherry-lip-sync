@@ -23,6 +23,7 @@ clap = { version = "4.5.27", features = ["derive"] }
 realfft = "3.4.0"
 rustfft = "6.2.0"
 symphonium = { version = "0.2.2", features = ["mp3", "flac"] }
+test_bin = "0.4.0"
 
 [profile.release]
 opt-level = 'z'

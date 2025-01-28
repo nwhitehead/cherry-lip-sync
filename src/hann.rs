@@ -1,6 +1,5 @@
-
-use std::vec::Vec;
 use std::f32::consts::PI;
+use std::vec::Vec;
 
 pub fn hann_window(length: usize) -> Vec<f32> {
     let mut v = Vec::new();
