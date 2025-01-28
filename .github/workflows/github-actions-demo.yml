@@ -1,4 +1,4 @@
-name: GitHub Actions Demo
+name: Rust CI
 run-name: CI build for ${{ github.actor }} 🚀
 on: [push]
 jobs:
