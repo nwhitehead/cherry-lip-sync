@@ -1,4 +1,26 @@
-This software is subject to the following licenses.
+## Summary
+
+This summary is not legally binding. The actual license terms are defined by the
+license texts.
+
+* Cherry Lip Sync is dual-licensed under Apache 2.0 and MIT terms. See
+  LICENSE-APACHE and LICENSE-MIT for details.
+
+* All of its third-party dependencies (libraries, resources, etc.) are released
+  under the MIT license, a BSD license, MPL-2.0, or a similar permissive
+  license. This means that you can use Cherry Lip Sync in almost any way you
+  want, including the creation of commercial software based on it.
+
+* When you run Cherry Lip Sync on an audio file, the resulting lip sync data
+  belongs to you alone. This means that if you use Cherry Lip Sync in the
+  production process of a video game, an animated cartoon, or a similar product
+  _that doesn't ship with lip sync functionality_, you don't even have to care
+  about the license terms.
+
+* If you make changes to files in dependency libraries for a derivative work of
+  this project, please examine the precise license terms of the project being
+  modified. Dependencies with MPL-2.0 license terms do require modifications to
+  be made public.
 
 ==============================================================================
 
@@ -6,22 +28,8 @@ Cherry Lip Sync - a tool for generating lip sync timing information
 
 Copyright (c) 2025-present Nathan Whitehead
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Cherry Lip Sync is dual-licensed under Apache 2.0 and MIT
+terms. See LICENSE-APACHE and LICENSE-MIT for details.
 
 ===============================================================================
 
@@ -30,7 +38,8 @@ to the following license.
 
 -------------------------------------------------------------------------------
 
-V. Panayotov, G. Chen, D. Povey and S. Khudanpur, _Librispeech: An ASR corpus based on public domain audio books_
+V. Panayotov, G. Chen, D. Povey and S. Khudanpur, _Librispeech: An ASR corpus
+based on public domain audio books_
 
 https://www.openslr.org/12
 
@@ -38,3 +47,36 @@ License: CC BY 4.0
 https://creativecommons.org/licenses/by/4.0/deed.en
 
 ===============================================================================
+
+Cherry Lip Sync uses software from the following crates with given licenses. For
+full licensing information please see each project.
+
+(Apache-2.0 OR MIT) AND BSD-3-Clause (1): encoding_rs
+(MIT OR Apache-2.0) AND Unicode-3.0 (1): unicode-ident
+0BSD OR Apache-2.0 OR MIT (1): adler2
+Apache-2.0 (9): bytesize, codespan-reporting, gl_generator, glutin_wgl_sys, khronos_api, safetensors, safetensors, spirv, zopfli
+Apache-2.0 OR Apache-2.0 WITH LLVM-exception OR MIT (3): linux-raw-sys, rustix, wasi
+Apache-2.0 OR BSD-2-Clause OR MIT (2): zerocopy, zerocopy-derive
+Apache-2.0 OR BSD-3-Clause OR MIT (2): num_enum, num_enum_derive
+Apache-2.0 OR BSL-1.0 (1): ryu
+Apache-2.0 OR CC0-1.0 (1): imgref
+Apache-2.0 OR CC0-1.0 OR MIT-0 (1): constant_time_eq
+Apache-2.0 OR ISC OR MIT (1): rustls
+Apache-2.0 OR MIT (351): aes, ahash, allocator-api2, android_system_properties, anstream, anstyle, anstyle-parse, anstyle-query, anstyle-wincon, anyhow, arbitrary, arrayvec, ash, async-channel, async-lock, autocfg, base64, base64ct, bit-set, bit-vec, bit_field, bitflags, bitflags, bitstream-io, block-buffer, bumpalo, burn, burn-autodiff, burn-candle, burn-common, burn-core, burn-cuda, burn-dataset, burn-derive, burn-fusion, burn-hip, burn-import, burn-jit, burn-ndarray, burn-router, burn-tch, burn-tensor, burn-train, burn-wgpu, bzip2, bzip2-sys, candle-core, cassowary, cc, cfg-expr, cfg-if, cherrylipsync, cipher, clap, clap_builder, clap_derive, clap_lex, colorchoice, concurrent-queue, core-foundation, core-foundation-sys, core-graphics-types, cpufeatures, crc, crc-catalog, crc32fast, crossbeam-channel, crossbeam-deque, crossbeam-epoch, crossbeam-utils, crypto-common, cubecl, cubecl-common, cubecl-core, cubecl-cpp, cubecl-cuda, cubecl-hip, cubecl-hip-sys, cubecl-ir, cubecl-linalg, cubecl-macros, cubecl-macros-internal, cubecl-reduce, cubecl-runtime, cubecl-wgpu, cudarc, deranged, derive_arbitrary, digest, dirs, dirs-sys, displaydoc, document-features, either, embassy-futures, enum-as-inner, equivalent, errno, event-listener, event-listener-strategy, fallible-iterator, fallible-streaming-iterator, fastrand, fdeflate, flate2, float-ord, fnv, foreign-types, foreign-types-macros, foreign-types-shared, form_urlencoded, futures, futures-channel, futures-core, futures-executor, futures-io, futures-lite, futures-macro, futures-sink, futures-task, futures-timer, futures-util, getrandom, gif, gix-features, gix-fs, gix-hash, gix-tempfile, gix-trace, gix-utils, glob, gpu-alloc, gpu-alloc-types, gpu-allocator, gpu-descriptor, gpu-descriptor-types, half, hashbrown, hashbrown, hashbrown, hashlink, heck, hermit-abi, hmac, home, ident_case, idna, idna_adapter, image, image-webp, indexmap, indoc, inout, is_terminal_polyfill, itertools, itertools, itoa, jni-sys, jobserver, jpeg-decoder, js-sys, khronos-egl, lazy_static, libc, litrs, lock_api, log, matrixmultiply, md5, memmap2, metal, minimal-lexical, naga, ndarray, ndarray, ndk-sys, ntapi, num, num-bigint, num-complex, num-conv, num-derive, num-integer, num-iter, num-rational, num-traits, num_cpus, num_threads, nvml-wrapper, nvml-wrapper-sys, once_cell, onnx-ir, parking, parking_lot, parking_lot_core, password-hash, paste, pbkdf2, pbkdf2, percent-encoding, pin-project-lite, pin-utils, pkg-config, png, portable-atomic, portable-atomic-util, powerfmt, ppv-lite86, presser, prettyplease, primal-check, proc-macro-crate, proc-macro2, profiling, profiling-procmacros, qoi, quick-error, quote, r2d2, rand, rand_chacha, rand_core, rand_distr, range-alloc, rawpointer, rayon, rayon-core, regex, regex-automata, regex-syntax, relative-path, renderdoc-sys, rstest, rstest_macros, rust-format, rustc-hash, rustc_version, rustfft, rustls-pki-types, rustversion, scheduled-thread-pool, scopeguard, semver, seq-macro, serde, serde_bytes, serde_derive, serde_json, serde_rusqlite, serde_spanned, sha1, sha2, shlex, signal-hook, signal-hook-mio, signal-hook-registry, smallvec, stable_deref_trait, static_assertions, strength_reduce, syn, syn, system-deps, tch, tempfile, test_bin, thiserror, thiserror, thiserror-impl, thiserror-impl, thread-tree, thread_local, time, time-core, time-macros, toml, toml_datetime, toml_edit, torch-sys, transpose, typenum, ug, unicode-normalization, unicode-segmentation, unicode-truncate, unicode-width, unicode-width, unicode-xid, ureq, url, utf16_iter, utf8_iter, utf8parse, uuid, variadics_please, vcpkg, version_check, wasm-bindgen, wasm-bindgen-backend, wasm-bindgen-futures, wasm-bindgen-macro, wasm-bindgen-macro-support, wasm-bindgen-shared, web-sys, web-time, weezl, wgpu, wgpu-core, wgpu-hal, wgpu-types, winapi, winapi-i686-pc-windows-gnu, winapi-x86_64-pc-windows-gnu, windows, windows, windows-core, windows-core, windows-implement, windows-implement, windows-interface, windows-interface, windows-result, windows-result, windows-strings, windows-sys, windows-sys, windows-sys, windows-targets, windows-targets, windows_aarch64_gnullvm, windows_aarch64_gnullvm, windows_aarch64_msvc, windows_aarch64_msvc, windows_i686_gnu, windows_i686_gnu, windows_i686_gnullvm, windows_i686_msvc, windows_i686_msvc, windows_x86_64_gnu, windows_x86_64_gnu, windows_x86_64_gnullvm, windows_x86_64_gnullvm, windows_x86_64_msvc, windows_x86_64_msvc, wrapcenum-derive, write16, zeroize, zeroize_derive, zstd-safe, zstd-safe, zstd-sys
+Apache-2.0 OR MIT OR NCSA (1): libfuzzer-sys
+Apache-2.0 OR MIT OR Unlicense (1): atomic_float
+Apache-2.0 OR MIT OR Zlib (10): bytemuck, bytemuck_derive, glow, miniz_oxide, raw-window-handle, tinyvec, tinyvec_macros, zune-core, zune-inflate, zune-jpeg
+Apache-2.0 WITH LLVM-exception (1): target-lexicon
+(Apache-2.0 OR MIT) AND MIT (1): libm
+BSD-2-Clause (3): av1-grain, rav1e, v_frame
+BSD-3-Clause (5): avif-serialize, exr, lebe, ravif, subtle
+BSL-1.0 (1): lockfree-object-pool
+CC0-1.0 (2): constant_time_eq, hexf-parse
+Custom License File (1): ring
+ISC (3): libloading, rustls-webpki, untrusted
+MIT (100): aligned-vec, arg_enum_proc_macro, bincode, block, built, bytes, castaway, cfg_aliases, color_quant, compact_str, crossterm, crossterm_winapi, crunchy, darling, darling_core, darling_macro, dashmap, data-encoding, deflate64, derive-new, derive-new, derive_more, derive_more-impl, dyn-stack, extended, faster-hex, gemm, gemm-c32, gemm-c64, gemm-common, gemm-f16, gemm-f32, gemm-f64, generic-array, instability, interpolate_name, libredox, libsqlite3-sys, loop9, lru, lzma-rs, malloc_buf, maybe-rayon, mio, new_debug_unreachable, nom, noop_proc_macro, nu-ansi-term, objc, ordered-float, overload, protobuf, protobuf-codegen, protobuf-parse, protobuf-support, pulp, r2d2_sqlite, ratatui, raw-cpuid, realfft, reborrow, redox_syscall, redox_users, rgb, rmp, rmp-serde, rubato, rusqlite, sanitize-filename, sanitize-filename, sharded-slab, simd-adler32, simd_helpers, slab, spin, strsim, strum, strum_macros, synstructure, sysctl, sysinfo, text_placeholder, tiff, tracing-appender, tracing-core, tracing-log, tracing-subscriber, type_hash, type_hash_core, type_hash_macros, valuable, version-compare, which, winnow, xml-rs, zip, zip, zip, zstd, zstd
+MIT OR Unlicense (10): aho-corasick, byteorder, byteorder-lite, csv, csv-core, memchr, same-file, termcolor, walkdir, winapi-util
+MPL-2.0 (14): colored, option-ext, symphonia, symphonia-bundle-flac, symphonia-bundle-mp3, symphonia-codec-pcm, symphonia-codec-vorbis, symphonia-core, symphonia-format-ogg, symphonia-format-riff, symphonia-metadata, symphonia-utils-xiph, symphonium, webpki-roots
+Unicode-3.0 (19): icu_collections, icu_locid, icu_locid_transform, icu_locid_transform_data, icu_normalizer, icu_normalizer_data, icu_properties, icu_properties_data, icu_provider, icu_provider_macros, litemap, tinystr, writeable, yoke, yoke-derive, zerofrom, zerofrom-derive, zerovec, zerovec-derive
+Unlicense (1): systemstat
+Zlib (2): foldhash, slotmap
