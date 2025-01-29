@@ -47,18 +47,18 @@ closest basic shape is given in the table above under "Alternative".
 
 The command line tool is very basic. Options are:
 
-    CherryLipSync
-    Analyze audio input and generate lip sync timing information output
+    Cherry Lip Sync allows you to create 2D mouth animations from voice recordings
+    or artificially generated voices.
 
-    Usage: lipsync [OPTIONS] --input <INPUT> --output <OUTPUT>
+    Usage: cherrylipsync [OPTIONS] --input <INPUT>
 
     Options:
-    -i, --input <INPUT>    Path to input audio
-    -o, --output <OUTPUT>  Path to output file to generate
-    -f, --fps <FPS>        Desired FPS of output frames [default: 30]
-        --filter           Filter single frame output frames
-    -h, --help             Print help
-    -V, --version          Print version
+      -i, --input <INPUT>    Path to input audio
+      -o, --output <OUTPUT>  Path to output file to generate, or "-" to write to stdout [default: -]
+      -f, --fps <FPS>        Desired FPS of output frames [default: 30]
+          --filter           Filter single frame output frames
+      -h, --help             Print help
+      -V, --version          Print version
 
 ## Input Format
 
@@ -121,3 +121,4 @@ Other major platforms should be able to compile and run the source code.
 
 Cherry Lip Sync is dual-licensed under Apache 2.0 and MIT terms. See
 [LICENSE-APACHE](./LICENSE-APACHE) and [LICENSE-MIT](./LICENSE-MIT) for details.
+See [NOTICE](./NOTICE) for more licensing information about dependencies.

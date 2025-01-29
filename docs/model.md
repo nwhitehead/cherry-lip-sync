@@ -1,7 +1,7 @@
 # Cherry Lip Sync Model
 
-The Cherry Lip Sync model was developed based on the ideas from
-_Real-Time Lip Sync for Live 2D Animation_[^1].
+The Cherry Lip Sync model was developed based on the ideas from _Real-Time Lip
+Sync for Live 2D Animation_[^1].
 
 ## The Model
 
@@ -46,17 +46,21 @@ Some of the notable things NOT present:
 
 ## Training Data
 
-The training set is a proprietary lip sync dataset generated using audio
-from LibriSpeech[^2]. The lip sync timing information was generated using
-a variety of methods:
+The training set is a private lip sync dataset generated using audio from
+LibriSpeech[^2]. The lip sync timing information was generated using a variety
+of methods:
 
 1) Manual annotation
-2) Time warping existing visemes from a word to other instances of the same word
-3) Time warping existing training examples to generate new examples
-4) Synthetic TTS generation with known phoneme timings and rules for visemes
+2) Existing lip sync tools with manual quality review
+3) Time warping audio and sync data in parallel for existing training examples
+   to generate new examples at different cadences
+4) Mapping and time warping existing visemes from a word to other audio
+   instances of the same word
+4) Synthetic text-to-speech generation with known phoneme timings and rules for
+   visemes
 5) Apply voice changing to existing audio examples without changing timing
 
-The synthetic examples were generated using
+The synthetic examples for (4) were generated using
 [MeloTTS](https://github.com/myshell-ai/MeloTTS) with modifications to output
 phoneme timing information. The phonemes are mapped to plausible visemes using
 an ad-hoc (and evolving) set of programmatic rules with some element of random
@@ -73,6 +77,11 @@ voice changing.
 
 The current training dataset contains about 1 hour of English language audio and
 takes about 5 minutes to fully train with 200 epochs on an NVIDIA GTX 3090.
+
+I'm working on cleaning up the dataset before releasing it publicly. The current
+aggregated dataset is basically an experimental concatenation of a bunch of
+half-baked evolving ideas. Whenever I saw something reasonable I threw it in the
+training set and went back to tweaking stuff and trying more samples.
 
 ## Python
 
@@ -91,6 +100,11 @@ The main command line tool includes the `bin` format model inside the executable
 to avoid needing any configuration files or setup.
 
 
-[^1]: D. Aneja, W. Li. _Real-Time Lip Sync for Live 2D Animation_. https://arxiv.org/abs/1910.08685
+[^1]: D. Aneja, W. Li. _Real-Time Lip Sync for Live 2D Animation_.
+    https://arxiv.org/abs/1910.08685
 
-[^2]: V. Panayotov, G. Chen, D. Povey and S. Khudanpur, _Librispeech: An ASR corpus based on public domain audio books_, 2015 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), South Brisbane, QLD, Australia, 2015, pp. 5206-5210, doi: 10.1109/ICASSP.2015.7178964.
+[^2]: V. Panayotov, G. Chen, D. Povey and S. Khudanpur, _Librispeech: An ASR
+    corpus based on public domain audio books_, 2015 IEEE International
+    Conference on Acoustics, Speech and Signal Processing (ICASSP), South
+    Brisbane, QLD, Australia, 2015, pp. 5206-5210, doi:
+    10.1109/ICASSP.2015.7178964.
