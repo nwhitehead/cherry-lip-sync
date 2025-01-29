@@ -21,7 +21,7 @@ struct Args {
     input: String,
 
     /// Path to output file to generate
-    #[arg(short, long)]
+    #[arg(short, long, default_value = "-")]
     output: String,
 
     /// Desired FPS of output frames
@@ -40,10 +40,6 @@ fn viseme_to_str(data: i64) -> &'static str {
 fn main() {
     let args = Args::parse();
     let writing_stdout = args.output == "-";
-    // Say hello if we are not writing output to stdout
-    if !writing_stdout {
-        println!("CherryLipSync");
-    }
     // Load model
     let device = Default::default();
     let recorder = BinBytesRecorder::<FullPrecisionSettings>::new();
