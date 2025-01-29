@@ -10,11 +10,13 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Build
-        run: cargo build --release
+        run: |
+          cargo build --release
+          zip -j Cherry-Lip-Sync-macOS.zip target/release/cherrylipsync README.md LICENSE-APACHE LICENSE-MIT NOTICE
       - uses: actions/upload-artifact@v4
         with:
           name: build-artifact-macos
-          path: target/release/cherrylipsync
+          path: *.zip
   WindowsRelease:
     name: Windows build for release
     runs-on: ubuntu-latest
@@ -26,11 +28,13 @@ jobs:
       - name: Get MinGW
         run: sudo apt install gcc-mingw-w64
       - name: Build
-        run: cargo build --release --target x86_64-pc-windows-gnu
+        run: |
+          cargo build --release --target x86_64-pc-windows-gnu
+          zip -j Cherry-Lip-Sync-Windows.zip target/x86_64-pc-windows-gnu/release/cherrylipsync.exe README.md LICENSE-APACHE LICENSE-MIT NOTICE
       - uses: actions/upload-artifact@v4
         with:
           name: build-artifact-win
-          path: target/x86_64-pc-windows-gnu/release/cherrylipsync.exe
+          path: *.zip
   LinuxRelease:
     name: Linux build for release
     runs-on: ubuntu-latest
@@ -42,11 +46,13 @@ jobs:
       - name: Get Musl
         run: sudo apt install musl-tools
       - name: Build
-        run: cargo build --release --target x86_64-unknown-linux-musl
+        run: |
+          cargo build --release --target x86_64-unknown-linux-musl
+          zip -j Cherry-Lip-Sync-Linux.zip target/x86_64-unknown-linux-musl/release/cherrylipsync README.md LICENSE-APACHE LICENSE-MIT NOTICE
       - uses: actions/upload-artifact@v4
         with:
           name: build-artifact-linux
-          path: target/x86_64-unknown-linux-musl/release/cherrylipsync
+          path: *.zip
   Upload:
     name: Save artifacts
     runs-on: ubuntu-latest
@@ -56,5 +62,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: build-artifact-*
+          merge-multiple: true
       - name: Show what we have
         run: ls -R
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-artifacts
