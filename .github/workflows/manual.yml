@@ -14,7 +14,7 @@ jobs:
           cargo build --release
           mkdir Cherry-Lip-Sync
           cp target/release/cherrylipsync Cherry-Lip-Sync/
-          cp README.md LICENSE-APACHE LICENSE-MIT NOTICE Cherry-Lip-Sync/
+          cp README.md LICENSE-APACHE LICENSE-MIT NOTICE testing/hello.ogg Cherry-Lip-Sync/
           zip -r Cherry-Lip-Sync-macOS.zip Cherry-Lip-Sync/
       - uses: actions/upload-artifact@v4
         with:
@@ -35,7 +35,7 @@ jobs:
           cargo build --release --target x86_64-pc-windows-gnu
           mkdir Cherry-Lip-Sync
           cp target/x86_64-pc-windows-gnu/release/cherrylipsync.exe Cherry-Lip-Sync/
-          cp README.md LICENSE-APACHE LICENSE-MIT NOTICE Cherry-Lip-Sync/
+          cp README.md LICENSE-APACHE LICENSE-MIT NOTICE testing/hello.ogg Cherry-Lip-Sync/
           zip -r Cherry-Lip-Sync-Windows.zip Cherry-Lip-Sync/
       - uses: actions/upload-artifact@v4
         with:
@@ -56,7 +56,7 @@ jobs:
           cargo build --release --target x86_64-unknown-linux-musl
           mkdir Cherry-Lip-Sync
           cp target/x86_64-unknown-linux-musl/release/cherrylipsync Cherry-Lip-Sync/
-          cp README.md LICENSE-APACHE LICENSE-MIT NOTICE Cherry-Lip-Sync/
+          cp README.md LICENSE-APACHE LICENSE-MIT NOTICE testing/hello.ogg Cherry-Lip-Sync/
           zip -r Cherry-Lip-Sync-Linux.zip Cherry-Lip-Sync/
       - uses: actions/upload-artifact@v4
         with:
