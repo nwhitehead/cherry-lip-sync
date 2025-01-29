@@ -56,6 +56,5 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: build-artifact-*
-          merge-multiple: true
       - name: Show what we have
         run: ls -R
