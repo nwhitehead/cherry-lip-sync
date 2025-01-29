@@ -20,7 +20,7 @@ struct Args {
     #[arg(short, long)]
     input: String,
 
-    /// Path to output file to generate
+    /// Path to output file to generate, or "-" to write to stdout
     #[arg(short, long, default_value = "-")]
     output: String,
 
