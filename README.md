@@ -98,32 +98,26 @@ Example:
     0.600   B
     0.633   X
 
+## Model
+
+For information about the model and trainind, see [Cherry Lip Sync
+Model](./docs/model.md).
 
 ## Comparison with Rhubarb
 
-https://github.com/user-attachments/assets/5490cbff-9e34-4464-ad8a-f21fbf633341
+For a video comparison with Rhubarb and some other notes, see [Comparison with
+Rhubarb](./docs/comparison.md).
 
-The above video shows Rhubarb output for a challenging synthetic voice. On the
-left is the result without providing any text. On the right is the Rhubarb
-result with source text provided.
+## Supported Platforms
 
-Next Rhubarb is shown against Cherry. In this comparison Rhubarb has source text
-provided but Cherry just uses audio. Rhubarb struggles to get enough viseme
-changes to make the animation look convincing. Cherry picks more visemes but is
-perhaps too "chattery".
+Cherry Lip Sync currently supports the following platforms in binary releases:
+* Linux, x86-64, most distributions
+* Windows, 64-bit
+* macOS, Apple silicon
 
-### Performance
+Other major platforms should be able to compile and run the source code.
 
-On my desktop, a _HP All-in-One 24-df1xxx_ with an 8 core _11th Gen Intel® Core™
-i5-1135G7_ CPU, `cheerylipsync` processes `605` seconds of audio stored in `.mp3`
-format in `13.542s` (wall clock time). That is `44.7` times faster than
-realtime.
+## License
 
-`rhubarb` with _pocketSphinx_ recognizer takes `9.28s` (wall clock time) to
-process an `.ogg` file of length `7.7s`. That is `0.83` times faster than
-realtime (i.e. slower than realtime).
-
-`rhubarb` with _phonetic_ recognizer takes `2.27s` to process the same `7.7s`
-audio file, for a factor of `3.39` times faster than realtime. For the longer
-file of `605` seconds, it takes `33.56s` for a factor of `18.03` times faster
-than realtime.
+Cherry Lip Sync is dual-licensed under Apache 2.0 and MIT terms. See
+[LICENSE-APACHE](./LICENSE-APACHE) and [LICENSE-MIT](./LICENSE-MIT) for details.
