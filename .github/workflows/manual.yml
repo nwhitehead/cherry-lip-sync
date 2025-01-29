@@ -16,7 +16,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: build-artifact-macos
-          path: *.zip
+          path: ./*.zip
   WindowsRelease:
     name: Windows build for release
     runs-on: ubuntu-latest
@@ -34,7 +34,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: build-artifact-win
-          path: *.zip
+          path: ./*.zip
   LinuxRelease:
     name: Linux build for release
     runs-on: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: build-artifact-linux
-          path: *.zip
+          path: ./*.zip
   Upload:
     name: Save artifacts
     runs-on: ubuntu-latest
@@ -65,6 +65,7 @@ jobs:
           merge-multiple: true
       - name: Show what we have
         run: ls -R
+      - name: Upload final artifact
         uses: actions/upload-artifact@v4
         with:
           name: all-artifacts
