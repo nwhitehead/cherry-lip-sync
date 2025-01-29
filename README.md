@@ -100,7 +100,7 @@ Example:
 
 ## Model
 
-For information about the model and trainind, see [Cherry Lip Sync
+For information about the model and training, see [Cherry Lip Sync
 Model](./docs/model.md).
 
 ## Comparison with Rhubarb
