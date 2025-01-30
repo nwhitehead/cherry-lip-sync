@@ -1,6 +1,6 @@
 # Comparison with Rhubarb
 
-https://github.com/user-attachments/assets/5490cbff-9e34-4464-ad8a-f21fbf633341
+https://github.com/user-attachments/assets/80f5fa74-776c-465f-a658-2872c3748a93
 
 The above video shows Rhubarb output for a challenging synthetic voice. On the
 left is the result without providing any text. On the right is the Rhubarb
