@@ -11,6 +11,8 @@ talking avatars.
 Currently Cherry Lip Sync is a standalone tool but integrations are planned for
 other software applications.
 
+https://github.com/user-attachments/assets/28d9d73b-4d89-405a-bf91-366f96731cd4
+
 ## Demo Video
 
 https://github.com/user-attachments/assets/91ebfb48-fa81-4629-bf22-038d78d29a29
