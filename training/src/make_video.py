@@ -22,6 +22,9 @@ visemes = {
     'F': [0, 0],
 }
 
+def composite(target, source, position):
+  pass
+
 def main(args):
     timing = []
     with open(args.sync, 'r') as file:
@@ -41,23 +44,32 @@ def main(args):
         varray.append(vout)
     print(''.join(varray))
 
-    sprites = v2.Resize((256 * 4, 256 * 4))(torchvision.io.decode_image(args.sprites, 'RGB')).permute([1, 2, 0])
+    bg = v2.Resize((256, 256))(torchvision.io.decode_image(args.bg, 'RGB')).permute([1, 2, 0])
+    sprites = v2.Resize((256 * 4 // 4, 256 * 4 // 4))(torchvision.io.decode_image(args.sprites, 'RGBA')).permute([1, 2, 0])
     audio, audio_samplerate = torchaudio.load(args.audio)
     frames = len(varray)
     # Make copy of audio in stereo contiguous format for writing to video
     a = np.ascontiguousarray(audio.reshape(1, -1).expand(2, -1).numpy())
     v = torch.zeros(frames, 256, 256, 3)
+    xoff = 128 - 32
+    yoff = 128 + 20
     for i in range(frames):
         vi = varray[i]
         pos = visemes[vi]
-        v[i, :, :, :] = sprites[pos[0] * 256 : pos[0] * 256 + 256, pos[1] * 256 : pos[1] * 256 + 256, :]
-    torchvision.io.write_video(args.output, v, fps=args.fps, audio_array=a, audio_fps=audio_samplerate, audio_codec='aac')
+        alpha = sprites[pos[0] * 256 // 4 : pos[0] * 256 // 4 + 256 // 4, pos[1] * 256 // 4 : pos[1] * 256 // 4 + 256 // 4, 3].unsqueeze(2)
+        print(alpha.shape)
+        v[i, :, :, :] = bg
+        v[i, yoff:yoff+64, xoff:xoff+64, :] *= (255.0 - alpha ) / 255.0
+        v[i, yoff:yoff+64, xoff:xoff+64, :] += (alpha / 255.0) * (sprites[pos[0] * 256 // 4 : pos[0] * 256 // 4 + 256 // 4, pos[1] * 256 // 4 : pos[1] * 256 // 4 + 256 // 4, :3])
+    print(v.shape)
+    torchvision.io.write_video(args.output, v, fps=int(args.fps), audio_array=a, audio_fps=audio_samplerate, audio_codec='aac')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--audio', required=True)
     parser.add_argument('--sync', required=True)
     parser.add_argument('--sprites', required=True)
+    parser.add_argument('--bg', required=False)
     parser.add_argument('--output', required=True)
     parser.add_argument('--fps', type=float, default=30.0)
     args = parser.parse_args()
