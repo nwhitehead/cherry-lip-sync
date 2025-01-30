@@ -23,7 +23,18 @@ visemes = {
 }
 
 def composite(target, source, position):
-  pass
+    # alpha = sprites[pos[0] * sprite_sz : pos[0] * sprite_sz + sprite_sz, pos[1] * sprite_sz : pos[1] * sprite_sz + sprite_sz, 3].unsqueeze(2)
+    # v[i, :, :, :] = bg
+    # v[i, yoff:yoff+64, xoff:xoff+64, :] *= (255.0 - alpha ) / 255.0
+    # v[i, yoff:yoff+64, xoff:xoff+64, :] += (alpha / 255.0) * (sprites[pos[0] * 256 // 4 : pos[0] * 256 // 4 + 256 // 4, pos[1] * 256 // 4 : pos[1] * 256 // 4 + 256 // 4, :3])
+    xoff, yoff = position
+    xsize = source.shape[1]
+    ysize = source.shape[0]
+    out = target.clone()
+    alpha = source[:, :, 3].unsqueeze(2)
+    out[yoff:yoff+ysize, xoff:xoff+xsize, :] *= (255.0 - alpha) / 255.0
+    out[yoff:yoff+ysize, xoff:xoff+xsize, :] += alpha / 255.0 * source[:, :, :3]
+    return out
 
 def main(args):
     timing = []
@@ -44,23 +55,21 @@ def main(args):
         varray.append(vout)
     print(''.join(varray))
 
-    bg = v2.Resize((256, 256))(torchvision.io.decode_image(args.bg, 'RGB')).permute([1, 2, 0])
-    sprites = v2.Resize((256 * 4 // 4, 256 * 4 // 4))(torchvision.io.decode_image(args.sprites, 'RGBA')).permute([1, 2, 0])
+    sprite_sz = 32
+    bg = v2.Resize((256, 256))(torchvision.io.decode_image(args.bg, 'RGB')).permute([1, 2, 0]) * 1.0
+    sprites = v2.Resize((sprite_sz * 4, sprite_sz * 4))(torchvision.io.decode_image(args.sprites, 'RGBA')).permute([1, 2, 0])
     audio, audio_samplerate = torchaudio.load(args.audio)
     frames = len(varray)
     # Make copy of audio in stereo contiguous format for writing to video
     a = np.ascontiguousarray(audio.reshape(1, -1).expand(2, -1).numpy())
     v = torch.zeros(frames, 256, 256, 3)
-    xoff = 128 - 32
-    yoff = 128 + 20
+    xoff = 128 - sprite_sz // 2 + 6
+    yoff = 128 - sprite_sz // 2 + 52
     for i in range(frames):
         vi = varray[i]
         pos = visemes[vi]
-        alpha = sprites[pos[0] * 256 // 4 : pos[0] * 256 // 4 + 256 // 4, pos[1] * 256 // 4 : pos[1] * 256 // 4 + 256 // 4, 3].unsqueeze(2)
-        print(alpha.shape)
-        v[i, :, :, :] = bg
-        v[i, yoff:yoff+64, xoff:xoff+64, :] *= (255.0 - alpha ) / 255.0
-        v[i, yoff:yoff+64, xoff:xoff+64, :] += (alpha / 255.0) * (sprites[pos[0] * 256 // 4 : pos[0] * 256 // 4 + 256 // 4, pos[1] * 256 // 4 : pos[1] * 256 // 4 + 256 // 4, :3])
+        sprite = sprites[pos[0] * sprite_sz : pos[0] * sprite_sz + sprite_sz, pos[1] * sprite_sz : pos[1] * sprite_sz + sprite_sz, :]
+        v[i, :, :, :] = composite(bg, sprite, (xoff, yoff))
     print(v.shape)
     torchvision.io.write_video(args.output, v, fps=int(args.fps), audio_array=a, audio_fps=audio_samplerate, audio_codec='aac')
 
