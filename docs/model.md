@@ -60,7 +60,7 @@ of methods:
    visemes
 5) Apply voice changing to existing audio examples without changing timing
 
-The synthetic examples for (4) were generated using
+The synthetic examples for (5) were generated using
 [MeloTTS](https://github.com/myshell-ai/MeloTTS) with modifications to output
 phoneme timing information. The phonemes are mapped to plausible visemes using
 an ad-hoc (and evolving) set of programmatic rules with some element of random
