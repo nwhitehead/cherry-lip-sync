@@ -45,6 +45,12 @@ Cherry Lip Sync will always output all the mouth shapes. If you don't have all
 the extended shapes available then you can copy from the basic shapes. The
 closest basic shape is given in the table above under "Alternative".
 
+Different art styles will show the mouth and lips differently. One possible
+art style looks like this:
+
+![Table of mouth shapes and image of mouth shape in one art style](./images/Chart.png)
+
+
 ## Command Line Options
 
 The command line tool is very basic. Options are:
