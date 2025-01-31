@@ -11,12 +11,11 @@ talking avatars.
 Currently Cherry Lip Sync is a standalone tool but integrations are planned for
 other software applications.
 
-https://github.com/user-attachments/assets/28d9d73b-4d89-405a-bf91-366f96731cd4
+https://github.com/user-attachments/assets/def2b571-02ee-42ed-9eac-9e83ba759bb5
 
 ## Demo Video
 
-
-https://github.com/user-attachments/assets/def2b571-02ee-42ed-9eac-9e83ba759bb5
+https://github.com/user-attachments/assets/aefe9b3f-50bf-4406-9ccf-81592758a022
 
 The above video demonstrates lip sync output driving mouth pictures using
 Creative Commons licensed audio clips with no text provided. Animation sequences
