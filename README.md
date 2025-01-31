@@ -15,7 +15,8 @@ https://github.com/user-attachments/assets/28d9d73b-4d89-405a-bf91-366f96731cd4
 
 ## Demo Video
 
-https://github.com/user-attachments/assets/91ebfb48-fa81-4629-bf22-038d78d29a29
+
+https://github.com/user-attachments/assets/def2b571-02ee-42ed-9eac-9e83ba759bb5
 
 The above video demonstrates lip sync output driving mouth pictures using
 Creative Commons licensed audio clips with no text provided. Animation sequences
