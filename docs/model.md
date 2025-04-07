@@ -52,15 +52,11 @@ of methods:
 
 1) Manual annotation
 2) Existing lip sync tools with manual quality review
-3) Time warping audio and sync data in parallel for existing training examples
-   to generate new examples at different cadences
-4) Mapping and time warping existing visemes from a word to other audio
-   instances of the same word
-4) Synthetic text-to-speech generation with known phoneme timings and rules for
+3) Synthetic text-to-speech generation with known phoneme timings and rules for
    visemes
-5) Apply voice changing to existing audio examples without changing timing
+4) Apply voice changing to existing audio examples without changing timing
 
-The synthetic examples for (5) were generated using
+The synthetic examples for (3) were generated using
 [MeloTTS](https://github.com/myshell-ai/MeloTTS) with modifications to output
 phoneme timing information. The phonemes are mapped to plausible visemes using
 an ad-hoc (and evolving) set of programmatic rules with some element of random
