@@ -1,7 +1,7 @@
 # Cherry Lip Sync Model
 
-The Cherry Lip Sync model was developed based on the ideas from _Real-Time Lip
-Sync for Live 2D Animation_[^1].
+The Cherry Lip Sync model was developed based on ideas from the _Oculus Lipsync SDK_[^3][^4] and
+the paper _Real-Time Lip Sync for Live 2D Animation_[^1].
 
 ## The Model
 
@@ -69,7 +69,8 @@ Synthetic voice changing is used to change voices without altering timing of
 phonemes to extend the training set. This lets each high-quality lip sync
 example in the training set be extended to multiple speaking voices. I used
 [RVC](https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI) for
-voice changing.
+voice changing. This was an experimental thing and I'm not sure how much
+this affected lip sync quality.
 
 The current training dataset contains about 1 hour of English language audio and
 takes about 5 minutes to fully train with 200 epochs on an NVIDIA GTX 3090.
@@ -104,3 +105,7 @@ to avoid needing any configuration files or setup.
     Conference on Acoustics, Speech and Signal Processing (ICASSP), South
     Brisbane, QLD, Australia, 2015, pp. 5206-5210, doi:
     10.1109/ICASSP.2015.7178964.
+
+[^3]: https://developers.meta.com/horizon/documentation/native/audio-ovrlipsync-native
+
+[^4]: https://www.facebook.com/pytorch/videos/2142030806118038 (Starting at 31:39).
