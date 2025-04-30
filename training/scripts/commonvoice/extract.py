@@ -16,6 +16,7 @@ import random
 import numpy as np
 import torch
 import torchaudio
+import wave
 
 
 if __name__ == '__main__':
@@ -66,4 +67,12 @@ if __name__ == '__main__':
             audio_out = np.concatenate((audio_out, sample), axis=1)
         outpath = f'{args.output}-{n}.wav'
         torchaudio.save(outpath, torch.tensor(audio_out), format='wav', sample_rate=target_samplerate)
+        # Now simplify WAV file header by reading/writing it with wave module
+        with wave.open(outpath, 'rb') as fin:
+            params = fin.getparams()
+            n = fin.getnframes()
+            data = fin.readframes(n)
+        with wave.open(outpath, 'wb') as fout:
+            fout.setparams(params)
+            fout.writeframes(data)
         print(f'Wrote {outpath} ({time / 1000.0} s)')
