@@ -5,7 +5,7 @@ data for lip sync.
 
 
 Example usage:
-    uv run extract.py --cvroot=~/Downloads/old/cv-corpus-21.0-delta-2025-03-14/ --output ~/Downloads/old/cv-corpus-21.0-delta-2025-03-14/out.wav
+    uv run extract.py --cvroot=~/Downloads/old/cv-corpus-21.0-delta-2025-03-14/ --output ~/Downloads/old/cv-corpus-21.0-delta-2025-03-14/out
 
 """
 
@@ -26,6 +26,7 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=1)
     parser.add_argument('--duration', type=float, default=60.0)
     parser.add_argument('--samplerate', type=int, default=48000)
+    parser.add_argument('--num', type=int, default=1)
     args = parser.parse_args()
     random.seed(args.seed)
     
@@ -48,16 +49,21 @@ if __name__ == '__main__':
         next(reader)
         clips = [row[1] for row in reader]
 
+    # Use same shuffling for all n in num
+    # pop off elements and keep them off so we don't duplicate between n
     random.shuffle(clips)
-    result = []
-    time = 0
-    audio_out = np.zeros([1, 0])
-    while time < args.duration * 1000:
-        a = clips.pop()
-        result.append(a)
-        time += durations[a]
-        audio, samplerate = torchaudio.load(root / 'clips' / a)
-        target_samplerate = args.samplerate
-        sample = torchaudio.functional.resample(audio, samplerate, target_samplerate)
-        audio_out = np.concatenate((audio_out, sample), axis=1)
-    torchaudio.save(args.output, torch.tensor(audio_out), format='wav', sample_rate=target_samplerate)
+    for n in range(args.num):
+        result = []
+        time = 0
+        audio_out = np.zeros([1, 0])
+        while time < args.duration * 1000:
+            a = clips.pop()
+            result.append(a)
+            time += durations[a]
+            audio, samplerate = torchaudio.load(root / 'clips' / a)
+            target_samplerate = args.samplerate
+            sample = torchaudio.functional.resample(audio, samplerate, target_samplerate)
+            audio_out = np.concatenate((audio_out, sample), axis=1)
+        outpath = f'{args.output}-{n}.wav'
+        torchaudio.save(outpath, torch.tensor(audio_out), format='wav', sample_rate=target_samplerate)
+        print(f'Wrote {outpath} ({time / 1000.0} s)')
