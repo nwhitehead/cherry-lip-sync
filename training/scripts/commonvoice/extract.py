@@ -23,6 +23,7 @@ import torch
 import torchaudio
 import wave
 import os
+import pandas as pd
 
 
 if __name__ == '__main__':
@@ -33,11 +34,11 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=1)
     parser.add_argument('--duration', type=float, default=60.0)
     parser.add_argument('--samplerate', type=int, default=48000)
-    parser.add_argument('--num', type=int, default=1)
-    parser.add_argument('--command', type=str)
+    parser.add_argument('--num', type=int, default=2)
+    parser.add_argument('--command', type=str, default='wine ../../../win/ProcessWAV.exe --print-viseme-distribution')
     args = parser.parse_args()
     random.seed(args.seed)
-    
+
     root = Path(args.cvroot).expanduser() / args.language
     other_filename = root / 'other.tsv'
     duration_filename = root / 'clip_durations.tsv'
@@ -86,3 +87,19 @@ if __name__ == '__main__':
         print(f'Wrote {outpath} ({time / 1000.0} s)')
         if args.command:
             os.system(f'{args.command} {outpath} > {cmdoutpath}')
+
+    # Collect all WAV and output into one big table
+    entries = []
+    parquetpath = f'{args.output}.parquet'
+    for n in range(args.num):
+        outpath = f'{args.output}-{n}.wav'
+        cmdoutpath = f'{args.output}-{n}.out'
+        npypath = f'{args.output}-{n}.npy'
+        audio, samplerate = torchaudio.load(outpath)
+        audio = audio.numpy()[0]
+        with open(cmdoutpath, 'rt', newline='') as f:
+            reader = csv.reader(f, delimiter=' ')
+            data = [[float(x) for x in row] for row in reader]
+        entries.append({ 'audio': audio, 'visemes': data })
+    data = pd.DataFrame(entries)
+    data.to_parquet(parquetpath)
