@@ -5,7 +5,12 @@ data for lip sync.
 
 
 Example usage:
-    uv run extract.py --cvroot=~/Downloads/old/cv-corpus-21.0-delta-2025-03-14/ --output ~/Downloads/old/cv-corpus-21.0-delta-2025-03-14/out
+
+    uv run extract.py --cvroot=~/Downloads/old/cv-corpus-21.0-delta-2025-03-14/ \
+        --output ~/Downloads/old/cv-corpus-21.0-delta-2025-03-14/out \
+        --num=10 \
+        --duration=60 \
+        --command="wine ../../../win/ProcessWAV.exe --print-viseme-distribution"
 
 """
 
@@ -17,6 +22,7 @@ import numpy as np
 import torch
 import torchaudio
 import wave
+import os
 
 
 if __name__ == '__main__':
@@ -28,6 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('--duration', type=float, default=60.0)
     parser.add_argument('--samplerate', type=int, default=48000)
     parser.add_argument('--num', type=int, default=1)
+    parser.add_argument('--command', type=str)
     args = parser.parse_args()
     random.seed(args.seed)
     
@@ -66,6 +73,7 @@ if __name__ == '__main__':
             sample = torchaudio.functional.resample(audio, samplerate, target_samplerate)
             audio_out = np.concatenate((audio_out, sample), axis=1)
         outpath = f'{args.output}-{n}.wav'
+        cmdoutpath = f'{args.output}-{n}.out'
         torchaudio.save(outpath, torch.tensor(audio_out), format='wav', sample_rate=target_samplerate)
         # Now simplify WAV file header by reading/writing it with wave module
         with wave.open(outpath, 'rb') as fin:
@@ -76,3 +84,5 @@ if __name__ == '__main__':
             fout.setparams(params)
             fout.writeframes(data)
         print(f'Wrote {outpath} ({time / 1000.0} s)')
+        if args.command:
+            os.system(f'{args.command} {outpath} > {cmdoutpath}')
