@@ -9,8 +9,10 @@ Example usage:
     uv run extract.py --cvroot=~/Downloads/old/cv-corpus-21.0-delta-2025-03-14/ \
         --output ~/Downloads/old/cv-corpus-21.0-delta-2025-03-14/out \
         --num=10 \
-        --duration=60 \
-        --command="wine ../../../win/ProcessWAV.exe --print-viseme-distribution"
+        --loop=60 \
+        --duration=60
+
+This will produce `out/out-N.parquet` for N from 0 to 9.
 
 """
 
@@ -35,6 +37,7 @@ if __name__ == '__main__':
     parser.add_argument('--duration', type=float, default=60.0)
     parser.add_argument('--samplerate', type=int, default=48000)
     parser.add_argument('--num', type=int, default=2)
+    parser.add_argument('--loop', type=int, default=2)
     parser.add_argument('--command', type=str, default='wine ../../../win/ProcessWAV.exe --print-viseme-distribution')
     args = parser.parse_args()
     random.seed(args.seed)
@@ -61,45 +64,45 @@ if __name__ == '__main__':
     # Use same shuffling for all n in num
     # pop off elements and keep them off so we don't duplicate between n
     random.shuffle(clips)
-    for n in range(args.num):
-        result = []
-        time = 0
-        audio_out = np.zeros([1, 0])
-        while time < args.duration * 1000:
-            a = clips.pop()
-            result.append(a)
-            time += durations[a]
-            audio, samplerate = torchaudio.load(root / 'clips' / a)
-            target_samplerate = args.samplerate
-            sample = torchaudio.functional.resample(audio, samplerate, target_samplerate)
-            audio_out = np.concatenate((audio_out, sample), axis=1)
-        outpath = f'{args.output}-{n}.wav'
-        cmdoutpath = f'{args.output}-{n}.out'
-        torchaudio.save(outpath, torch.tensor(audio_out), format='wav', sample_rate=target_samplerate)
-        # Now simplify WAV file header by reading/writing it with wave module
-        with wave.open(outpath, 'rb') as fin:
-            params = fin.getparams()
-            n = fin.getnframes()
-            data = fin.readframes(n)
-        with wave.open(outpath, 'wb') as fout:
-            fout.setparams(params)
-            fout.writeframes(data)
-        print(f'Wrote {outpath} ({time / 1000.0} s)')
-        if args.command:
-            os.system(f'{args.command} {outpath} > {cmdoutpath}')
+    for on in range(args.num):
+        for n in range(args.loop):
+            result = []
+            time = 0
+            audio_out = np.zeros([1, 0])
+            while time < args.duration * 1000:
+                a = clips.pop()
+                result.append(a)
+                time += durations[a]
+                audio, samplerate = torchaudio.load(root / 'clips' / a)
+                target_samplerate = args.samplerate
+                sample = torchaudio.functional.resample(audio, samplerate, target_samplerate)
+                audio_out = np.concatenate((audio_out, sample), axis=1)
+            outpath = f'{args.output}-{on}-{n}.wav'
+            cmdoutpath = f'{args.output}-{on}-{n}.out'
+            torchaudio.save(outpath, torch.tensor(audio_out), format='wav', sample_rate=target_samplerate)
+            # Now simplify WAV file header by reading/writing it with wave module
+            with wave.open(outpath, 'rb') as fin:
+                params = fin.getparams()
+                n = fin.getnframes()
+                data = fin.readframes(n)
+            with wave.open(outpath, 'wb') as fout:
+                fout.setparams(params)
+                fout.writeframes(data)
+            print(f'Wrote {outpath} ({time / 1000.0} s)')
+            if args.command:
+                os.system(f'{args.command} {outpath} > {cmdoutpath}')
 
-    # Collect all WAV and output into one big table
-    entries = []
-    parquetpath = f'{args.output}.parquet'
-    for n in range(args.num):
-        outpath = f'{args.output}-{n}.wav'
-        cmdoutpath = f'{args.output}-{n}.out'
-        npypath = f'{args.output}-{n}.npy'
-        audio, samplerate = torchaudio.load(outpath)
-        audio = audio.numpy()[0]
-        with open(cmdoutpath, 'rt', newline='') as f:
-            reader = csv.reader(f, delimiter=' ')
-            data = [[float(x) for x in row] for row in reader]
-        entries.append({ 'audio': audio, 'visemes': data })
-    data = pd.DataFrame(entries)
-    data.to_parquet(parquetpath)
+        # Collect all WAV and output into one big table
+        entries = []
+        parquetpath = f'{args.output}-{on}.parquet'
+        for n in range(args.loop):
+            outpath = f'{args.output}-{on}-{n}.wav'
+            cmdoutpath = f'{args.output}-{on}-{n}.out'
+            audio, samplerate = torchaudio.load(outpath)
+            audio = audio.numpy()[0]
+            with open(cmdoutpath, 'rt', newline='') as f:
+                reader = csv.reader(f, delimiter=' ')
+                data = [[float(x) for x in row] for row in reader]
+            entries.append({ 'audio': audio, 'visemes': data })
+        data = pd.DataFrame(entries)
+        data.to_parquet(parquetpath)
